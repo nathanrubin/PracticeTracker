@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "practice-tracker",
+    "practice-tracker": "practice-tracker-e1838"
+  }
+}
