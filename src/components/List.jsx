@@ -1,11 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Alert, Container, Row } from "react-bootstrap"
+import { useAuth } from "../contexts/AuthContext"
+import { useHistory } from "react-router-dom"
+import { firestore } from "../firebase"
 import Idea from './Idea'
-import { withFirebase } from '../firebase/withFirebase'
 import * as theme from '../theme'
-import './App.less'
+import './List.less'
 
-const App = props => {
-  const { ideasCollection } = props.firebase
+export default function List() {
+  const [error, setError] = useState("")
+  const { currentUser, logout } = useAuth()
+  const history = useHistory()
+
+  async function handleLogout() {
+    setError("")
+
+    try {
+      await logout()
+      history.push("/login")
+    } catch {
+      setError("Failed to log out")
+    }
+  }
 
   const ideasContainer = useRef(null)
   const [idea, setIdeaInput] = useState('')
@@ -29,7 +45,7 @@ const App = props => {
   }, [currentTheme])
 
   useEffect(() => {
-    const unsubscribe = ideasCollection
+    const unsubscribe = firestore.collection('ideas')
       .orderBy('timestamp', 'desc')
       .onSnapshot(({ docs }) => {
         const ideasFromDB = []
@@ -52,7 +68,7 @@ const App = props => {
 
   const onIdeaDelete = event => {
     const { id } = event.target
-    ideasCollection.doc(id).delete()
+    firestore.collection('ideas').doc(id).delete()
   }
 
   const onIdeaAdd = event => {
@@ -63,7 +79,7 @@ const App = props => {
     setIdeaInput('')
     ideasContainer.current.scrollTop = 0 // scroll to top of container
 
-    ideasCollection.add({
+    firestore.collection('ideas').add({
       idea,
       timestamp: new Date()
     })
@@ -79,36 +95,33 @@ const App = props => {
   }
 
   return (
-    <div className="app">
-      <header className="app__header">
-        <h1 className="app__header__h1">Practice Tracker</h1>
-        <button
-          type="button"
-          className="app__btn theme-toggle"
-          onClick={toggleTheme}
-        >
-          {currentTheme === 'lightTheme' ? '🌑' : '🌕'}
+    <Container className="d-flex flex-column h-100">
+      <Row>
+        <h3>Nathan's PRACTICE TRACKER</h3>
+        <button type="button" className="btn btn-outline-dark" onClick={handleLogout}>
+          Log Out
         </button>
-      </header>
-
-      <section ref={ideasContainer} className="app__content">
-        {renderIdeas()}
-      </section>
-
-      <form className="app__footer" onSubmit={onIdeaAdd}>
-        <input
-          type="text"
-          className="app__footer__input"
-          placeholder="Add a new idea"
-          value={idea}
-          onChange={e => setIdeaInput(e.target.value)}
-        />
-        <button type="submit" className="app__btn app__footer__submit-btn">
-          +
-        </button>
-      </form>
-    </div>
+      </Row>
+      <Row>
+        {error && <Alert variant="danger">{error}</Alert>}
+        <section ref={ideasContainer} className="app__content">
+          {renderIdeas()}
+        </section>
+      </Row>
+      <Row>
+        <form onSubmit={onIdeaAdd}>
+          <input
+            type="text"
+            className="app__footer__input"
+            placeholder="Add a new idea"
+            value={idea}
+            onChange={e => setIdeaInput(e.target.value)}
+          />
+          <button type="submit" className="app__btn app__footer__submit-btn">
+            +
+          </button>
+        </form>
+      </Row>
+      </Container>
   )
 }
-
-export default withFirebase(App)

@@ -1,13 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './components/App'
-import { FirebaseContext, Firebase } from './firebase'
+import React from "react"
+import ReactDOM from "react-dom"
+import App from "./components/App"
+import 'regenerator-runtime/runtime'
+import "bootstrap/dist/css/bootstrap.min.css"
 
 const rootNode = document.querySelector('#root')
 
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
+  <React.StrictMode>
     <App />
-  </FirebaseContext.Provider>,
+  </React.StrictMode>,
   rootNode
-)
+);
