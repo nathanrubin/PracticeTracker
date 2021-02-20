@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Alert, Container, Row } from "react-bootstrap"
+import { Alert, Container, Row, Navbar, InputGroup, Button, FormControl, Form } from "react-bootstrap"
 import { useAuth } from "../contexts/AuthContext"
 import { useHistory } from "react-router-dom"
 import { firestore } from "../firebase"
 import Idea from './Idea'
 import * as theme from '../theme'
-import './List.less'
 
 export default function List() {
   const [error, setError] = useState("")
@@ -87,7 +86,7 @@ export default function List() {
 
   const renderIdeas = () => {
     if (!ideas.length)
-      return <h2 className="app__content__no-idea">Add a new Idea...</h2>
+      return <Alert variant="light"><h4>Add a new Idea...</h4></Alert>
 
     return ideas.map(idea => (
       <Idea key={idea.id} idea={idea} onDelete={onIdeaDelete} />
@@ -95,33 +94,40 @@ export default function List() {
   }
 
   return (
-    <Container className="d-flex flex-column h-100">
-      <Row>
-        <h3>Nathan's PRACTICE TRACKER</h3>
-        <button type="button" className="btn btn-outline-dark" onClick={handleLogout}>
-          Log Out
-        </button>
-      </Row>
-      <Row>
-        {error && <Alert variant="danger">{error}</Alert>}
-        <section ref={ideasContainer} className="app__content">
-          {renderIdeas()}
-        </section>
-      </Row>
-      <Row>
-        <form onSubmit={onIdeaAdd}>
-          <input
-            type="text"
-            className="app__footer__input"
-            placeholder="Add a new idea"
-            value={idea}
-            onChange={e => setIdeaInput(e.target.value)}
-          />
-          <button type="submit" className="app__btn app__footer__submit-btn">
-            +
+    <>
+      <Navbar bg="light">
+        <Navbar.Brand><h3>Nathan's PRACTICE TRACKER</h3></Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse className="justify-content-end">
+          <button type="button" className="btn btn-outline-dark" onClick={handleLogout}>
+            Log Out
           </button>
-        </form>
-      </Row>
+        </Navbar.Collapse>
+      </Navbar>
+      <Container>
+        <Row>
+          {error && <Alert variant="danger">{error}</Alert>}
+          <Container ref={ideasContainer} className="w-100" style={{ maxWidth: "600px" }}>
+            {renderIdeas()}
+          </Container>
+        </Row>
       </Container>
+      <Navbar fixed="bottom" bg="light" className="align-bottom">
+        <Form onSubmit={onIdeaAdd}>
+          <InputGroup className="mb-3">
+            <FormControl
+              placeholder="Add a new idea"
+              aria-label="Add a new idea"
+              aria-describedby="basic-addon2"
+              value={idea}
+              onChange={e => setIdeaInput(e.target.value)}
+            />
+            <InputGroup.Append>
+              <Button variant="outline-secondary" type="submit">+</Button>
+            </InputGroup.Append>
+          </InputGroup>
+        </Form>
+      </Navbar>
+    </>
   )
 }

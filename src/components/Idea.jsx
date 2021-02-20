@@ -1,18 +1,14 @@
 import React from 'react'
-import './Idea.less'
+import { Alert, Card, Container, Button, Navbar, Row, Col } from 'react-bootstrap'
 
 const Idea = ({ idea, onDelete }) => (
-  <div className="app__content__idea">
-    <p className="app__content__idea__text">{idea.content}</p>
-    <button
-      type="button"
-      className="app__btn app__content__idea__btn"
-      id={idea.id}
-      onClick={onDelete}
-    >
-      –
-    </button>
-  </div>
+    <Alert variant="light">
+      <Navbar className="justify-content-between">
+        <h4>{idea.content}</h4>
+        <Button variant="outline-danger" size="sm" id={idea.id} onClick={onDelete}>-</Button>
+      </Navbar>
+    </Alert>
+    
 )
 
 export default Idea
