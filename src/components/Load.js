@@ -1,22 +1,18 @@
 import React, { useRef, useState } from "react"
 import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import wagnerLogo from "../resources/icons/icon-512x512.png";
 
-import { useAuth } from "../contexts/AuthContext"
-import { useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        www.wagnersmusic.com
-      </Link>{' '}
+      <a href={'https://www.wagnersmusic.com/'}>www.wagnersmusic.com</a>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -33,14 +29,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
   button: {
     margin: theme.spacing(2, 0, 0),
     borderRadius: 50,
-    minWidth: 200
+    width: '100%',
+    minWidth: 200,
+    underline: 'none'
   },
   Media: {
     height: '100%',
@@ -51,34 +45,6 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn() {
   const classes = useStyles();
   
-  const emailRef = useRef()
-  const passwordRef = useRef()
-  const { login } = useAuth()
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const history = useHistory()
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-
-    try {
-      setError("")
-      setLoading(true)
-      console.log("login... await - " + emailRef.current.value)
-      await login(emailRef.current.value, passwordRef.current.value)
-      console.log("login... finished")
-
-      history.push('/')
-
-      console.log("login... history push")
-    } catch {
-      setError("Failed to log in")
-    }
-
-    setLoading(false)
-    console.log("login... loading finished")
-  }
-
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
@@ -86,30 +52,30 @@ export default function SignIn() {
         <Typography variant="body2" color="textSecondary" align="center">
           Sign in to continue
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit} noValidate>
           
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            size="large"
+            component={Link} to="/signup"
             className={classes.button}
-            href="/signup"
           >
-            Create New Account
+            Sign up
           </Button>
+          
           <Button
             type="submit"
             fullWidth
+            size="large"
             variant="outlined"
             color="primary"
+            component={Link} to="/signin"
             className={classes.button}
-            href="/signin"
           >
-            Sign In
+            Sign in
           </Button>
-          
-        </form>
       </div>
       <Box mt={8}>
         <Copyright />

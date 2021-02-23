@@ -1,11 +1,9 @@
 import React, { useRef, useState } from "react"
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,15 +12,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
 import { useAuth } from "../contexts/AuthContext"
-import { useHistory } from "react-router-dom"
+import { useHistory, Link } from "react-router-dom"
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        www.wagnersmusic.com
-      </Link>{' '}
+      <a href={'https://www.wagnersmusic.com/'}>www.wagnersmusic.com</a>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -46,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    borderRadius: 50,
   },
 }));
 
@@ -69,7 +66,7 @@ export default function SignIn() {
       await login(emailRef.current.value, passwordRef.current.value)
       console.log("login... finished")
 
-      history.push('/')
+      history.push('/home')
 
       console.log("login... history push")
     } catch {
@@ -82,7 +79,6 @@ export default function SignIn() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -122,20 +118,22 @@ export default function SignIn() {
           <Button
             type="submit"
             fullWidth
+            size="large"
             variant="contained"
             color="primary"
+            disabled={loading}
             className={classes.submit}
           >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="/forgot-password" color="primary" variant="body2">
+              <Link to="/forgot-password" color="primary" textDecoration='inherited' variant="body2">
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" color="primary" variant="body2">
+              <Link to="/signup" color="primary" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

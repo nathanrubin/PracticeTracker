@@ -16,7 +16,7 @@ export default function List() {
 
     try {
       await logout()
-      history.push("/home")
+      history.push("/")
     } catch {
       setError("Failed to log out")
     }
