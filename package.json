@@ -18,9 +18,11 @@
   },
   "dependencies": {
     "@material-ui/core": "latest",
+    "@material-ui/data-grid": "^4.0.0-alpha.20",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "latest",
+    "@material-ui/x-grid": "^4.0.0-alpha.20",
     "bootstrap": "^4.6.0",
     "firebase": "^7.24.0",
     "react": "^16.14.0",
