@@ -1,11 +1,9 @@
 import React, { useRef, useState } from "react"
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import MUILink from '@material-ui/core/Link';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,17 +11,6 @@ import Container from '@material-ui/core/Container';
 
 import { useAuth } from "../contexts/AuthContext"
 import { useHistory, Link } from "react-router-dom"
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <a href={'https://www.wagnersmusic.com/'}>www.wagnersmusic.com</a>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -51,7 +38,7 @@ export default function SignIn() {
   
   const emailRef = useRef()
   const passwordRef = useRef()
-  const { login } = useAuth()
+  const { currentUser, login } = useAuth()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const history = useHistory()
@@ -66,7 +53,7 @@ export default function SignIn() {
       await login(emailRef.current.value, passwordRef.current.value)
       console.log("login... finished")
 
-      history.push('/home')
+      history.push('/')
 
       console.log("login... history push")
     } catch {
@@ -84,7 +71,7 @@ export default function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Log in to Practice Tracker
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
@@ -111,10 +98,6 @@ export default function SignIn() {
             inputRef={passwordRef}
             autoComplete="current-password"
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
           <Button
             type="submit"
             fullWidth
@@ -124,25 +107,22 @@ export default function SignIn() {
             disabled={loading}
             className={classes.submit}
           >
-            Sign In
+            Log In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link to="/forgot-password" color="primary" textDecoration='inherited' variant="body2">
+              <MUILink to="/forgot-password" color="primary" textDecoration='inherited' variant="body2" component={Link}>
                 Forgot password?
-              </Link>
+              </MUILink>
             </Grid>
             <Grid item>
-              <Link to="/signup" color="primary" variant="body2">
+              <MUILink to="/signup" color="primary" variant="body2" component={Link}>
                 {"Don't have an account? Sign Up"}
-              </Link>
+              </MUILink>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   )
 }

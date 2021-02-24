@@ -1,37 +1,44 @@
 import React, {useState} from "react"
-import { AuthProvider, useAuth } from "../contexts/AuthContext"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import List from "./List"
-import SignIn from "./SignIn"
-import Load from "./Load"
-import PrivateRoute from "./PrivateRoute"
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+
+import { useAuth } from "../contexts/AuthContext"
+
+import Dashboard from "./dashboard/Dashboard"
+import LogIn from "./LogIn"
+import Landing from "./Landing"
 import ForgotPassword from "./ForgotPassword"
-import UpdateProfile from "./UpdateProfile"
-import Signup from "./Signup"
+import SignUp from "./SignUp"
 import { ThemeProvider } from '@material-ui/core'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { normal, dark } from '../theme';
 
 function App() {
+  const { currentUser } = useAuth()
   const [theme, setTheme] = useState(true)
   const appliedTheme = createMuiTheme(theme ? normal : dark )
+
+  const authRoutes = () => (
+    <Switch>
+      <Route exact path="/" component={Dashboard} />
+      <Redirect from="/**" to="/" />
+    </Switch>
+  );
+  const routes = () => (
+    <Switch>
+      <Route exact path="/" component={Landing} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/login" component={LogIn} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+    </Switch>
+  );
 
   return (
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
       <Router>
-          <AuthProvider>
-            <Switch>
-              <Route exact path="/" component={Load} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/signin" component={SignIn} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-              <PrivateRoute exact path="/home" component={List} />
-              <PrivateRoute path="/update-profile" component={UpdateProfile} />
-            </Switch>
-          </AuthProvider>
-        </Router>
+        {currentUser? authRoutes():routes()}
+      </Router>
     </ThemeProvider>
   )
 }

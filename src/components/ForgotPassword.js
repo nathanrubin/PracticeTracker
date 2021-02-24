@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Alert from '@material-ui/lab/Alert';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+import MUILink from '@material-ui/core/Link';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -106,21 +106,18 @@ export default function ForgotPassword() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link to="/SignIn" color="primary" variant="body2">
-                Sign In
-              </Link>
+              <MUILink to="/login" color="primary" variant="body2" component={Link}>
+                Log In
+              </MUILink>
             </Grid>
             <Grid item>
-              <Link to="/signup" color="primary" variant="body2">
+              <MUILink to="/signup" color="primary" variant="body2" component={Link}>
                 {"Don't have an account? Sign Up"}
-              </Link>
+              </MUILink>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   )
 }
