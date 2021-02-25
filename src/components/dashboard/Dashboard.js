@@ -28,6 +28,7 @@ import { myProfile } from './Profile';
 import Assignments from './Assignments'
 import Weekly from './Weekly';
 import Title from './Title'
+import moment from "moment";
 
 const drawerWidth = 240;
 
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0),
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -130,9 +131,9 @@ export default function Dashboard() {
       </DialogTitle>
 
       <Divider />
-      <List>{myProfile}</List>
+      <List dense>{myProfile}</List>
       <Divider />
-      <List>
+      <List dense>
         <ListItem button onClick={handleLogout}>
           <ListItemIcon>
             <ExitToApp />
@@ -157,7 +158,10 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Practice Tracker
+            PRACTICE TRACKER
+          </Typography>
+          <Typography component="h2" variant="h6" color="secondary" noWrap className={classes.title}>
+            {moment().format("dddd, MMMM DD")}
           </Typography>
           <Button onClick={handleLogout}>Log out</Button>
         </Toolbar>
@@ -174,7 +178,12 @@ export default function Dashboard() {
             {error && <Alert severity="error">{error}</Alert>}
 
             {/* Assignments */}
-            <Assignments />
+            <Grid item>
+              <Paper className={classes.paper}>
+               <Assignments />
+              </Paper>
+            </Grid>
+            
 
             {/* Weekly */}
             <Grid item xs={12}>
