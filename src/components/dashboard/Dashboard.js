@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
+import { firestore } from "../../firebase"
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,14 +25,13 @@ import Paper from '@material-ui/core/Paper';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import MenuIcon from '@material-ui/icons/Menu';
 import Close from '@material-ui/icons/Close';
-import { myProfile } from './Profile';
+import { Profile } from './Profile';
 import Assignments from './Assignments'
 import Weekly from './Weekly';
 import Title from './Title'
 import moment from "moment";
 
 const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -96,9 +96,12 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles();
   const history = useHistory()
-  const { logout } = useAuth()
+  const { logout, currentUser } = useAuth()
   const [error, setError] = useState("")
   const [open, setOpen] = React.useState(false);
+  const [students, setStudents] = useState([])
+  const [currentStudent, setCurrentStudent] = useState({})
+
   
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -118,6 +121,35 @@ export default function Dashboard() {
     }
   }
 
+  useEffect(() => {
+    firestore.collection("students").where("email", "==", currentUser.email)
+    .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            const details = {
+              id: doc.id,
+              first: doc.data().first,
+              last: doc.data().last,
+              email: doc.data().email,
+              class: doc.data().class,
+              displayName: doc.data().displayName,
+              stickerPack: doc.data().stickerPack,
+              teacher: doc.data().teacher,
+              teacherStickers: doc.data().teacherStickers,
+              weekdaysComplete: doc.data().weekdaysComplete
+            }
+            students.push(details)
+            setCurrentStudent(details)
+        });
+      }).catch((error) => {
+          console.log("Error getting document:", error);
+      });
+  
+      return () => unsubscribe()
+    }, [])
+
   const list = (
     <div className={classes.list}>
       
@@ -131,7 +163,7 @@ export default function Dashboard() {
       </DialogTitle>
 
       <Divider />
-      <List dense>{myProfile}</List>
+      <List dense><Profile student={currentStudent} /></List>
       <Divider />
       <List dense>
         <ListItem button onClick={handleLogout}>
@@ -163,7 +195,6 @@ export default function Dashboard() {
           <Typography component="h2" variant="h6" color="secondary" noWrap className={classes.title}>
             {moment().format("dddd, MMMM DD")}
           </Typography>
-          <Button onClick={handleLogout}>Log out</Button>
         </Toolbar>
       </AppBar>
       <Drawer open={open} onClose={toggleDrawer(false)}>

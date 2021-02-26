@@ -72,8 +72,8 @@ export default function Assignments() {
         const labelId = `checkbox-list-label-${value}`;
 
         return (
-          <ListItem dense key={id} role={undefined} dense button onClick={handleToggle(id)}>
-            <ListItemIcon dense>
+          <ListItem dense key={id} role={undefined} button onClick={handleToggle(id)}>
+            <ListItemIcon>
               <Checkbox
                 edge="start"
                 checked={checked.indexOf(id) !== -1}
@@ -82,7 +82,7 @@ export default function Assignments() {
                 inputProps={{ 'aria-labelledby': labelId }}
               />
             </ListItemIcon>
-            <ListItemText dense id={labelId} secondary={`${value}`} style={{ color: (checked.indexOf(id) !== -1) ? wagner.coral : 'inherit', textDecoration : (checked.indexOf(id) !== -1) ? 'line-through' : 'none' }} />
+            <ListItemText id={labelId} secondary={`${value}`} style={{ color: (checked.indexOf(id) !== -1) ? wagner.coral : 'inherit', textDecoration : (checked.indexOf(id) !== -1) ? 'line-through' : 'none' }} />
             
           </ListItem>
         );

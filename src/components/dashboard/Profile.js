@@ -6,16 +6,16 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Person from '@material-ui/icons/Person';
 
-export const myProfile = (
+export const Profile = ({ student }) => (
   <div>
     <ListItem>
-      <ListItemText primary="Student:" secondary="Nathan Rubin" />
+      <ListItemText primary="Student:" secondary={student.first} />
     </ListItem>
     <ListItem>
-      <ListItemText primary="Class:" secondary="Mr. Aaron - Tuesday 3:15p" />
+      <ListItemText primary="Class:" secondary={student.class} />
     </ListItem>
     <ListItem>
-      <ListItemText primary="Stickers:" secondary="todo" />
+      <ListItemText primary="Stickers:" secondary={student.stickerPack} />
     </ListItem>
     <ListItem>
       <ListItemText primary="Achievements:" secondary="todo" />
