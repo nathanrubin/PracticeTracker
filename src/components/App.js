@@ -1,8 +1,6 @@
 import React, {useState} from "react"
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
-
 import { useAuth } from "../contexts/AuthContext"
-
 import Dashboard from "./dashboard/Dashboard"
 import LogIn from "./LogIn"
 import Landing from "./Landing"

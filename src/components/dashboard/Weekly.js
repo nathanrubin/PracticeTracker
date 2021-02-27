@@ -16,7 +16,6 @@ function createData(id, su, m, t, w, th, f, s) {
 
 const rows = [
   createData(0, 'X', 'X', 'X', 'X', 'X', 'X', 'X'),
-
 ];
 
 function preventDefault(event) {

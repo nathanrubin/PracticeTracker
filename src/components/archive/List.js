@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Alert, Container, Row, Navbar, InputGroup, Button, FormControl, Form } from "react-bootstrap"
-import { useAuth } from "../contexts/AuthContext"
+import { useAuth } from "../../contexts/AuthContext"
 import { useHistory } from "react-router-dom"
-import { firestore } from "../firebase"
+import { firestore } from "../../firebase"
 import Idea from './Idea'
-import * as theme from '../theme'
 
 export default function List() {
   const [error, setError] = useState("")
@@ -128,6 +127,21 @@ export default function List() {
           </InputGroup>
         </Form>
       </Navbar>
+
+
+
+      {assignments.map( (assignment, i)  => 
+            <Grid key={i} item xs>
+                <CardActionArea component="a" href="#">
+                    <Paper button key={i} color="primary" className={classes.paper}>
+                        <Assignment color="primary"  />
+                        <Typography kkey={i} color="textSecondary">
+                            {assignment}
+                        </Typography>
+                    </Paper>
+                </CardActionArea>
+            </Grid>
+        )}
     </>
   )
 }

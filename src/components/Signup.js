@@ -52,12 +52,14 @@ export default function Signup() {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
+      setLoading(false)
       history.push("/")
     } catch {
       setError("Failed to create an account")
+      setLoading(false)
     }
 
-    setLoading(false)
+
   }
 
   return (
@@ -71,31 +73,6 @@ export default function Signup() {
         </Typography>
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="Student's First Name"
-                inputRef={studentFirstRef}
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Student's Last Name"
-                name="lastName"
-                inputRef={studentLastRef}
-                autoComplete="lname"
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"

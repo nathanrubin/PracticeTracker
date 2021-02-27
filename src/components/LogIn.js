@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function LogIn() {
   const classes = useStyles();
   
   const emailRef = useRef()
@@ -49,19 +49,16 @@ export default function SignIn() {
     try {
       setError("")
       setLoading(true)
-      console.log("login... await - " + emailRef.current.value)
+      
       await login(emailRef.current.value, passwordRef.current.value)
-      console.log("login... finished")
+      setLoading(false)
 
       history.push('/')
-
-      console.log("login... history push")
     } catch {
       setError("Failed to log in")
+      setLoading(false)
     }
 
-    setLoading(false)
-    console.log("login... loading finished")
   }
 
   return (
