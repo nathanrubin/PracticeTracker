@@ -15,26 +15,6 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import { Grid } from '@material-ui/core';
 import { wagner } from '../../theme';
 
-
-const columns = [
-  { field: 'assignment', headerName: 'Assignments', flex: 1 },
-];
-
-const rows = [
-  { id: 1, assignment: 'Ocean Waves – m.1-12 – 5x' },
-  { id: 2, assignment: '(Bingos Dance) 2x' },
-  { id: 3, assignment: 'Cossack Ride – Fast! 1x' },
-];
-
-function getAssignments() {
-    return ["Ocean Waves – m.1-12 – 5x ", "(Bingos Dance) 2x ", "Cossack Ride – Fast! 1x "]
-}
-const assignments = getAssignments();
-
-function preventDefault(event) {
-  event.preventDefault();
-}
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -43,9 +23,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Assignments() {
+export default function Assignments({first, assignments}) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState([0]);
+  const [checked, setChecked] = React.useState([]);
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -66,7 +46,7 @@ export default function Assignments() {
           <ListItemIcon>
               <AssignmentIcon color='primary' />
           </ListItemIcon>
-          <ListItemText primary={'Assignments'} />
+          <ListItemText primary={`${first}'s Assignments`} />
       </ListItem>
       {assignments.map((value, id) => {
         const labelId = `checkbox-list-label-${value}`;

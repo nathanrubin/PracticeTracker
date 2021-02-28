@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Link, useHistory } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import { firestore } from "../../firebase"
+import { useUser } from "../../contexts/UserContext"
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,11 +8,6 @@ import Alert from '@material-ui/lab/Alert';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ExitToApp from '@material-ui/icons/ExitToApp'
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -26,19 +19,14 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Close from '@material-ui/icons/Close';
-import { Profile } from './Profile';
+import { SideBar } from './SideBar';
 import Assignments from './Assignments'
 import Weekly from './Weekly';
 import Title from './Title'
 import moment from "moment";
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import Menu from '@material-ui/core/Menu';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import { Button } from 'bootstrap';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -111,12 +99,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const classes = useStyles();
-  const history = useHistory()
-  const { logout, currentUser } = useAuth()
+  const { students, selectedStudent, selectStudent, assignments } = useUser()
   const [error, setError] = useState("")
   const [open, setOpen] = React.useState(false);
-  const [students, setStudents] = useState([])
-  const [selectedStudent, setSelectedStudent] = useState('')
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const toggleDrawer = (open) => (event) => {
@@ -127,7 +112,7 @@ export default function Dashboard() {
   };
 
   const switchStudent = (event, index) => {
-    setSelectedStudent(index)
+    selectStudent(index)
     setAnchorEl(null)
   };
   const handleClose = () => {
@@ -136,75 +121,6 @@ export default function Dashboard() {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  async function handleLogout() {
-    setError("")
-
-    try {
-      await logout()
-      history.push("/")
-    } catch {
-      setError("Failed to log out")
-    }
-  }
-
-  useEffect(() => {
-    firestore.collection("students").where("email", "==", currentUser.email)
-    .get()
-    .then((querySnapshot) => {
-        const dbStudents = []
-
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            const details = {
-              id: doc.id,
-              first: doc.data().first,
-              last: doc.data().last,
-              email: doc.data().email,
-              class: doc.data().class,
-              displayName: doc.data().displayName,
-              stickerPack: doc.data().stickerPack,
-              teacher: doc.data().teacher,
-              teacherStickers: doc.data().teacherStickers,
-              weekdaysComplete: doc.data().weekdaysComplete
-            }
-            dbStudents.push(details);
-        });
-        if (dbStudents.length > 0){
-          setStudents(dbStudents)
-          setSelectedStudent(0)
-        }
-        
-      }).catch((error) => {
-          console.log("Error getting document:", error);
-      });
-    }, [])
-
-  const list = (
-    <div className={classes.list}>
-      
-      <DialogTitle disableTypography className={classes.drawerTitle}>
-        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          Account info
-        </Typography>
-        <IconButton onClick={toggleDrawer(false)}>
-            <Close />
-        </IconButton>
-      </DialogTitle>
-      <Divider />
-      <List dense><Profile student={students[selectedStudent]} /></List>
-      <Divider />
-      <List dense>
-        <ListItem button variant="link" onClick={handleLogout}>
-          <ListItemIcon>
-            <ExitToApp />
-          </ListItemIcon>
-          <ListItemText primary="Log out" />
-        </ListItem>
-      </List>
-    </div>
-  );
 
   return (
     <div className={classes.root}>
@@ -232,8 +148,8 @@ export default function Dashboard() {
                 onClick={handleMenu}
                 color="inherit"
               >
-                <AccountCircle />
-              </IconButton>
+            <AccountCircle />
+          </IconButton>
           {/* <Button color="inherit" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu}>Login</Button> */}
           <Menu
             id="student-select"
@@ -251,7 +167,18 @@ export default function Dashboard() {
         </Toolbar>
       </AppBar>
       <Drawer open={open} onClose={toggleDrawer(false)}>
-        {list}
+      <div className={classes.list}>
+        <DialogTitle disableTypography className={classes.drawerTitle}>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            Account info
+          </Typography>
+          <IconButton onClick={toggleDrawer(false)}>
+              <Close />
+          </IconButton>
+        </DialogTitle>
+        <Divider />
+        <SideBar student={students[selectedStudent]}/>
+      </div>
       </Drawer>
       
       <main className={classes.content}>
@@ -264,7 +191,7 @@ export default function Dashboard() {
             {/* Assignments */}
             <Grid item>
               <Paper className={classes.paper}>
-               <Assignments />
+               <Assignments first={`${students[selectedStudent].first}`} assignments={assignments}/>
               </Paper>
             </Grid>
             

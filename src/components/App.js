@@ -1,6 +1,7 @@
 import React, {useState} from "react"
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
+import { UserProvider } from "../contexts/UserContext"
 import Dashboard from "./dashboard/Dashboard"
 import LogIn from "./LogIn"
 import Landing from "./Landing"
@@ -17,10 +18,12 @@ function App() {
   const appliedTheme = createMuiTheme(theme ? normal : dark )
 
   const authRoutes = () => (
-    <Switch>
-      <Route exact path="/" component={Dashboard} />
-      <Redirect from="/**" to="/" />
-    </Switch>
+    <UserProvider>
+      <Switch>
+        <Route exact path="/" component={Dashboard} />
+        <Redirect from="/**" to="/" />
+      </Switch>
+    </UserProvider>
   );
   const routes = () => (
     <Switch>
