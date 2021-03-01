@@ -21,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
+  headerIcon: {
+    paddingLeft: 13
+  },
+  headerText: {
+    paddingLeft: 3
+  }
 }));
 
 export default function Assignments({first, assignments}) {
@@ -42,27 +48,28 @@ export default function Assignments({first, assignments}) {
   return (
     <React.Fragment>
     <List className={classes.root} dense={true}>
-      <ListItem>
+      <ListItem className={classes.headerIcon}>
           <ListItemIcon>
-              <AssignmentIcon color='primary' />
+              <AssignmentIcon color='primary'/>
           </ListItemIcon>
-          <ListItemText primary={`${first}'s Assignments`} />
+          <ListItemText className={classes.headerText} primary={`${first}'s Assignments`}/>
       </ListItem>
       {assignments.map((value, id) => {
         const labelId = `checkbox-list-label-${value}`;
+        const checkId = `${first}-${id}`;
 
         return (
-          <ListItem dense key={id} role={undefined} button onClick={handleToggle(id)}>
+          <ListItem dense key={checkId} role={undefined} button onClick={handleToggle(checkId)}>
             <ListItemIcon>
               <Checkbox
                 edge="start"
-                checked={checked.indexOf(id) !== -1}
+                checked={checked.indexOf(checkId) !== -1}
                 tabIndex={-1}
                 disableRipple
                 inputProps={{ 'aria-labelledby': labelId }}
               />
             </ListItemIcon>
-            <ListItemText id={labelId} secondary={`${value}`} style={{ color: (checked.indexOf(id) !== -1) ? wagner.coral : 'inherit', textDecoration : (checked.indexOf(id) !== -1) ? 'line-through' : 'none' }} />
+            <ListItemText id={labelId} secondary={`${value}`} style={{ color: (checked.indexOf(checkId) !== -1) ? wagner.coral : 'inherit', textDecoration : (checked.indexOf(checkId) !== -1) ? 'line-through' : 'none' }} />
             
           </ListItem>
         );

@@ -199,7 +199,7 @@ export default function Dashboard() {
             {/* Weekly */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-                <Weekly />
+                <Weekly student={students[selectedStudent]}/>
               </Paper>
             </Grid>
           </Grid>

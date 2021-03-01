@@ -18,47 +18,42 @@ const rows = [
   createData(0, 'X', 'X', 'X', 'X', 'X', 'X', 'X'),
 ];
 
-function preventDefault(event) {
-  event.preventDefault();
+function isComplete(day, weekdaysComplete) {
+  return weekdaysComplete.includes(day) ? 'Image' : 'X'
 }
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    margin: theme.spacing(10, 0),
+    padding: theme.spacing(2, 0)
   },
+  header: {
+    width: '5rem'
+  },
+  cell: {
+    border: 0,
+    width: '5rem',
+    minWidth: '40px'
+  }
 }));
 
-export default function Week() {
+export default function Weekly({student}) {
   const classes = useStyles();
   return (
-    <React.Fragment>
-      <Title>Weekly Practice</Title>
-      <Table size="small">
+      <Table className={classes.row}>
         <TableHead>
           <TableRow>
-            <TableCell>SU</TableCell>
-            <TableCell>M</TableCell>
-            <TableCell>T</TableCell>
-            <TableCell>W</TableCell>
-            <TableCell>TH</TableCell>
-            <TableCell>F</TableCell>
-            <TableCell>S</TableCell>
+            {['SU', 'M', 'T', 'W', 'TH', 'F', 'S'].map((day) => (
+              <TableCell key={day} align='center' className={classes.header}>{day}</TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.su}</TableCell>
-              <TableCell>{row.m}</TableCell>
-              <TableCell>{row.t}</TableCell>
-              <TableCell>{row.w}</TableCell>
-              <TableCell>{row.th}</TableCell>
-              <TableCell>{row.f}</TableCell>
-              <TableCell>{row.s}</TableCell>
-            </TableRow>
-          ))}
+          <TableRow>
+            {[0, 1, 2, 3, 4, 5, 6].map((day) => (
+              <TableCell key={day} align='center' className={classes.cell}>{isComplete(day, student.weekdaysComplete)}</TableCell>
+            ))}
+          </TableRow>
         </TableBody>
       </Table>
-    </React.Fragment>
   );
 }

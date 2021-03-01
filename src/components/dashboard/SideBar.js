@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Divider from '@material-ui/core/Divider'
 
-export function SideBar (props) {
+export function SideBar ({student}) {
 
   const { logout } = useAuth()
   const history = useHistory()
@@ -28,13 +28,13 @@ export function SideBar (props) {
     <React.Fragment>
       <List dense>
         <ListItem>
-          <ListItemText primary="Student:" secondary={props.student.first} />
+          <ListItemText primary="Student:" secondary={student.first} />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Class:" secondary={props.student.class} />
+          <ListItemText primary="Class:" secondary={student.class} />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Stickers:" secondary={props.student.stickerPack} />
+          <ListItemText primary="Stickers:" secondary={student.stickerPack} />
         </ListItem>
         <ListItem>
           <ListItemText primary="Achievements:" secondary="todo" />
