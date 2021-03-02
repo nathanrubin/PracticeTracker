@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   list: {
-    width: 340,
+    width: 250
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {

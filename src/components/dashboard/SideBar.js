@@ -44,19 +44,19 @@ export function SideBar ({student}) {
   return (
     <React.Fragment>
       <Grid container spacing={1} className={classes.container}>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Class: </Typography>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <Typography className={classes.title} color="secondary" gutterBottom>{student.teacher} - {student.class}</Typography>
         </Grid>
-        <Grid item xs={3}>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>Play-Along: </Typography>
+        <Grid item xs={4}>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>Songs: </Typography>
         </Grid>
-        <Grid item xs={9}>
-          <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">wagnersmusic.com/playalong-songs</a>
+        <Grid item xs={8}>
+          <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">Play Along Songs</a>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Stickers: </Typography>
         </Grid>
         <Grid item xs={12}>
