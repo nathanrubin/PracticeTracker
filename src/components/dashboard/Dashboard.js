@@ -23,7 +23,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import Menu from '@material-ui/core/Menu';
 
-const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -62,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   list: {
-    width: 250,
+    width: 340,
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -132,9 +131,6 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             PRACTICE TRACKER
           </Typography>
-          {/* <Typography component="h2" variant="h6" color="secondary" noWrap className={classes.title}>
-            {moment().format("dddd, MMMM DD")}
-          </Typography> */}
           <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
@@ -144,7 +140,6 @@ export default function Dashboard() {
               >
             <AccountCircle color="primary" />
           </IconButton>
-          {/* <Button color="inherit" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu}>Login</Button> */}
           <Menu
             id="student-select"
             anchorEl={anchorEl}
@@ -164,7 +159,7 @@ export default function Dashboard() {
       <div className={classes.list}>
         <DialogTitle disableTypography className={classes.drawerTitle}>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Account info
+            {students[selectedStudent].first}'s Profile
           </Typography>
           <IconButton onClick={toggleDrawer(false)}>
               <Close />
