@@ -103,8 +103,7 @@ export function UserProvider({ children }) {
 
   function addToday() {
     const studentId = students[selectedStudent].id;
-    const today = moment().isoWeekday() % 7
-    const update = union(students[selectedStudent].weekdaysComplete, [today]);
+    const update = union(students[selectedStudent].weekdaysComplete, [today()]);
     students[selectedStudent].weekdaysComplete = update
     firestore.collection("students").doc(studentId).update( {
         weekdaysComplete: update
@@ -113,8 +112,7 @@ export function UserProvider({ children }) {
 
   function removeToday() {
     const studentId = students[selectedStudent].id;
-    const today = moment().isoWeekday() % 7
-    const index = students[selectedStudent].weekdaysComplete.indexOf(today);
+    const index = students[selectedStudent].weekdaysComplete.indexOf(today());
     if (index > -1) {
         students[selectedStudent].weekdaysComplete.splice(index, 1);
     }
@@ -128,9 +126,12 @@ export function UserProvider({ children }) {
   }
 
   function isTodayComplete() {
-    const today = moment().isoWeekday() % 7
-    return isWeekdayComplete(today)
-}
+    return isWeekdayComplete(today())
+  }
+
+ function today() {
+    return moment().isoWeekday() % 7
+ }
 
   const value = {
     students,
@@ -140,7 +141,8 @@ export function UserProvider({ children }) {
     addToday,
     removeToday,
     isWeekdayComplete,
-    isTodayComplete
+    isTodayComplete,
+    today
   }
 
   return (

@@ -71,8 +71,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(0),
+    padding: theme.spacing(1)
   },
   paper: {
     padding: theme.spacing(1),
@@ -143,7 +142,7 @@ export default function Dashboard() {
                 onClick={handleMenu}
                 color="inherit"
               >
-            <AccountCircle />
+            <AccountCircle color="primary" />
           </IconButton>
           {/* <Button color="inherit" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu}>Login</Button> */}
           <Menu
@@ -180,8 +179,8 @@ export default function Dashboard() {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           {error && <Alert severity="error">{error}</Alert>}
+          <Weekly />
         </Container>
-        <Weekly />
       </main>
     </div>
   );

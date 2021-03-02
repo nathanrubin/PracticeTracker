@@ -20,6 +20,7 @@ import { wagner } from '../../theme';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
 
 function renderDayOfWeek(dayName, dayIndex) {
   const classes = useStyles();
@@ -31,12 +32,6 @@ function renderDayOfWeek(dayName, dayIndex) {
       </Avatar> 
     </div>:
     dayName
-  )
-}
-
-function isComplete(day, weekdaysComplete) {
-  return (
-    weekdaysComplete.includes(day) ? <TrophyIcon color='secondary' fontSize="large"/> : <ClearIcon color='secondary' fontSize="large"/>
   )
 }
 
@@ -73,26 +68,27 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(5),
     height: theme.spacing(5),
-    color: theme.palette.getContrastText(theme.palette.secondary.main),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: wagner.blue,
   }
 }));
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isTodayComplete } = useUser()
+  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isTodayComplete, today } = useUser()
   const student = students[selectedStudent];
-  const isCompleteOnLoad = isTodayComplete()
 
-  const [checked, setChecked] = React.useState(isTodayComplete() ? defaultChecked : []);
+  const [checked, setChecked] = React.useState(getInitialChecked());
 
-  function defaultChecked() {
-    console.log("gettind default checked")
+  function getInitialChecked() {
     var array = []
-    assignments.map((value, id) => {
-      const checkId = `${student.first}-${id}`;
-      array.push(checkId)
-    });
+    students.map(st => {
+      if (st.weekdaysComplete.includes(today())) {
+        assignments.map((value, id) => {
+          const checkId = `${st.first}-${id}`;
+          array.push(checkId)
+        })
+      }
+    })
     return array
   }
 
@@ -110,7 +106,7 @@ export default function Weekly() {
     setChecked(newChecked);
 
     // if all our checked, add day as complete
-    if (newChecked.length === assignments.length) {
+    if (newChecked.filter(name => name.includes(student.first)).length === assignments.length) {
       addToday()
     } 
   };
@@ -133,7 +129,7 @@ export default function Weekly() {
               <TableRow>
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <TableCell key={day} align='center' className={classes.cell}>{isWeekdayComplete(day) ? 
-                    <TrophyIcon color='secondary' fontSize="large"/> : <ClearIcon color='secondary' fontSize="large"/>
+                    <TrophyIcon style={{ color: wagner.green }} fontSize="large"/> : day === today() ? "" : <ClearIcon color='secondary' fontSize="large"/>
                   }</TableCell>
                 ))}
               </TableRow>
@@ -147,12 +143,12 @@ export default function Weekly() {
         <Card className={classes.rootAssignments}>
           <CardHeader className={classes.headerAssignments}
             avatar={
-              <Avatar variant="rounded" className={classes.avatar}>
+              <Avatar variant="rounded" className={classes.avatar} style={{ backgroundColor: wagner.coral }}>
                 <AssignmentIcon />
               </Avatar>
             }
-            title={`${student.first}'s Assignments`}
-            subheader={moment().format("dddd, MMMM DD")}
+            title={<div>{student.first}'s Assignments</div>}
+            subheader={<div style={{ color: wagner.coral }} >{moment().format("dddd, MMMM DD")}</div>}
           />
             <List className={classes.root} dense={true} disablePadding={true}>
             <Grid container spacing={0}>
