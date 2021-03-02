@@ -58,8 +58,6 @@ export function UserProvider({ children }) {
     firestore.collection("classes").where("teacher", "==", teacher).where("class", "==", classDateTime)
     .get()
     .then((querySnapshot) => {
-        console.log("returned from class lookup")
-
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
@@ -85,8 +83,6 @@ export function UserProvider({ children }) {
   function selectStudent(selected) {
     setSelectedStudent(selected)
     const st = students[selected]
-    console.log("student selected: " + st.first + " number of classes available: " + classes.length)
-
     if (classes.length > 0) {
         classes.filter(c => (c.teacher === st.teacher && c.class === st.class)).map( studentsClass => setAssignments(studentsClass.assignments))
     }
