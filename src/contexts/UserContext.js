@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react"
 import { firestore } from "../firebase"
 import { useAuth } from "./AuthContext"
+import moment from 'moment';
 
 const UserContext = React.createContext()
 
@@ -92,11 +93,54 @@ export function UserProvider({ children }) {
     return
   }
 
+  function not(a, b) {
+    return a.filter((value) => b.indexOf(value) === -1);
+  }
+
+  function union(a, b) {
+    return [...a, ...not(b, a)];
+  }
+
+  function addToday() {
+    const studentId = students[selectedStudent].id;
+    const today = moment().isoWeekday() % 7
+    const update = union(students[selectedStudent].weekdaysComplete, [today]);
+    students[selectedStudent].weekdaysComplete = update
+    firestore.collection("students").doc(studentId).update( {
+        weekdaysComplete: update
+     });
+  }
+
+  function removeToday() {
+    const studentId = students[selectedStudent].id;
+    const today = moment().isoWeekday() % 7
+    const index = students[selectedStudent].weekdaysComplete.indexOf(today);
+    if (index > -1) {
+        students[selectedStudent].weekdaysComplete.splice(index, 1);
+    }
+    firestore.collection("students").doc(studentId).update( {
+        weekdaysComplete: students[selectedStudent].weekdaysComplete
+     });
+  }
+
+  function isWeekdayComplete(day) {
+      return students[selectedStudent].weekdaysComplete.includes(day);
+  }
+
+  function isTodayComplete() {
+    const today = moment().isoWeekday() % 7
+    return isWeekdayComplete(today)
+}
+
   const value = {
     students,
     selectedStudent,
     assignments,
-    selectStudent
+    selectStudent,
+    addToday,
+    removeToday,
+    isWeekdayComplete,
+    isTodayComplete
   }
 
   return (

@@ -1,59 +1,187 @@
 import React from 'react';
+import { useUser } from "../../contexts/UserContext"
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Link from '@material-ui/core/Link';
+import ClearIcon from '@material-ui/icons/Clear'
+import TrophyIcon from '@material-ui/icons/EmojiEvents'
+import Avatar from '@material-ui/core/Avatar'
+import moment from 'moment';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import { wagner } from '../../theme';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Grid from '@material-ui/core/Grid'
 
-import Title from './Title';
+function renderDayOfWeek(dayName, dayIndex) {
+  const classes = useStyles();
 
-// Generate Order Data
-function createData(id, su, m, t, w, th, f, s) {
-  return { id, su, m, t, w, th, f, s };
+  return ( dayIndex === (moment().isoWeekday() % 7) ? 
+    <div className={classes.root}>
+      <Avatar className={classes.avatar}>
+        {dayName}
+      </Avatar> 
+    </div>:
+    dayName
+  )
 }
 
-const rows = [
-  createData(0, 'X', 'X', 'X', 'X', 'X', 'X', 'X'),
-];
-
 function isComplete(day, weekdaysComplete) {
-  return weekdaysComplete.includes(day) ? 'Image' : 'X'
+  return (
+    weekdaysComplete.includes(day) ? <TrophyIcon color='secondary' fontSize="large"/> : <ClearIcon color='secondary' fontSize="large"/>
+  )
 }
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    justifyContent: "center",
+  },
+  rootAssignments: {
+    backgroundColor: theme.palette.background.paper
+  },
   table: {
     padding: theme.spacing(2, 0)
   },
   header: {
-    width: '5rem'
+    width: '4rem',
+    padding: 6
   },
   cell: {
     border: 0,
-    width: '5rem',
-    minWidth: '40px'
+    width: '4rem',
+    padding: 6
+  },
+  headerAssignments: {
+    padding: 0
+  },
+  list: {
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  listIcon: {
+    minWidth: 45
+  },
+  avatar: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+    color: theme.palette.getContrastText(theme.palette.secondary.main),
+    backgroundColor: theme.palette.secondary.main,
   }
 }));
 
-export default function Weekly({student}) {
+export default function Weekly() {
   const classes = useStyles();
+  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isTodayComplete } = useUser()
+  const student = students[selectedStudent];
+  const isCompleteOnLoad = isTodayComplete()
+
+  const [checked, setChecked] = React.useState(isTodayComplete() ? defaultChecked : []);
+
+  function defaultChecked() {
+    console.log("gettind default checked")
+    var array = []
+    assignments.map((value, id) => {
+      const checkId = `${student.first}-${id}`;
+      array.push(checkId)
+    });
+    return array
+  }
+
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+      removeToday()
+    }
+
+    setChecked(newChecked);
+
+    // if all our checked, add day as complete
+    if (newChecked.length === assignments.length) {
+      addToday()
+    } 
+  };
+
   return (
-      <Table className={classes.row}>
-        <TableHead>
-          <TableRow>
-            {['SU', 'M', 'T', 'W', 'TH', 'F', 'S'].map((day) => (
-              <TableCell key={day} align='center' className={classes.header}>{day}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-              <TableCell key={day} align='center' className={classes.cell}>{isComplete(day, student.weekdaysComplete)}</TableCell>
-            ))}
-          </TableRow>
-        </TableBody>
-      </Table>
+    <Grid container spacing={1}>
+
+      {/* Weekly */}
+      <Grid item xs={12}>
+        <Card className={classes.root}>
+          <Table className={classes.row}>
+            <TableHead>
+              <TableRow>
+                {['SU', 'M', 'T', 'W', 'TH', 'F', 'S'].map((day, id) => (
+                  <TableCell key={day} align='center' className={classes.header}>{renderDayOfWeek(day, id)}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                {[0, 1, 2, 3, 4, 5, 6].map((day) => (
+                  <TableCell key={day} align='center' className={classes.cell}>{isWeekdayComplete(day) ? 
+                    <TrophyIcon color='secondary' fontSize="large"/> : <ClearIcon color='secondary' fontSize="large"/>
+                  }</TableCell>
+                ))}
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Card>
+      </Grid>
+
+      {/* Assignments */}
+      <Grid item xs={12}>
+        <Card className={classes.rootAssignments}>
+          <CardHeader className={classes.headerAssignments}
+            avatar={
+              <Avatar variant="rounded" className={classes.avatar}>
+                <AssignmentIcon />
+              </Avatar>
+            }
+            title={`${student.first}'s Assignments`}
+            subheader={moment().format("dddd, MMMM DD")}
+          />
+            <List className={classes.root} dense={true} disablePadding={true}>
+            <Grid container spacing={0}>
+              {assignments.map((value, id) => {
+                const labelId = `checkbox-list-label-${value}`;
+                const checkId = `${student.first}-${id}`;
+
+                return (
+                  <Grid item xs={12} sm={6} key={checkId}>
+                  <ListItem dense={true} key={checkId} role={undefined} className={classes.list} button onClick={handleToggle(checkId)}>
+                    <ListItemIcon className={classes.listIcon}>
+                      <Checkbox 
+                        edge="start"
+                        checked={checked.indexOf(checkId) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': labelId }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText id={labelId} secondary={`${value}`} style={{ color: (checked.indexOf(checkId) !== -1) ? wagner.coral : 'inherit', textDecoration : (checked.indexOf(checkId) !== -1) ? 'line-through' : 'none' }} />
+                  </ListItem>
+                  </Grid>
+                );
+              })}
+              </Grid>
+            </List>
+          </Card>
+      </Grid>
+      
+    </Grid>
   );
 }

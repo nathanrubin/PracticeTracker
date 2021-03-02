@@ -12,18 +12,13 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import MenuIcon from '@material-ui/icons/Menu';
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Close from '@material-ui/icons/Close';
 import { SideBar } from './SideBar';
-import Assignments from './Assignments'
 import Weekly from './Weekly';
-import Title from './Title'
-import moment from "moment";
 import MenuItem from '@material-ui/core/MenuItem';
 
 import Menu from '@material-ui/core/Menu';
@@ -76,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(0),
   },
   paper: {
@@ -184,26 +179,9 @@ export default function Dashboard() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-
-            {error && <Alert severity="error">{error}</Alert>}
-
-            {/* Assignments */}
-            <Grid item>
-              <Paper className={classes.paper}>
-               <Assignments first={`${students[selectedStudent].first}`} assignments={assignments}/>
-              </Paper>
-            </Grid>
-            
-
-            {/* Weekly */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Weekly student={students[selectedStudent]}/>
-              </Paper>
-            </Grid>
-          </Grid>
+          {error && <Alert severity="error">{error}</Alert>}
         </Container>
+        <Weekly />
       </main>
     </div>
   );
