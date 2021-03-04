@@ -148,6 +148,10 @@ export function UserProvider({ children }) {
     return moment().isoWeekday() % 7
  }
 
+ function getClassTime() {
+   return students[selectedStudent].class.trim().split(" ")[1].toLowerCase();
+ }
+
   const value = {
     students,
     selectedStudent,
@@ -159,7 +163,8 @@ export function UserProvider({ children }) {
     isTodayComplete,
     isClassDay,
     today,
-    isDayInPast
+    isDayInPast,
+    getClassTime
   }
 
   return (

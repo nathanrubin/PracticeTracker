@@ -1,6 +1,6 @@
 import React from 'react';
 import { useUser } from "../../contexts/UserContext"
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -22,7 +22,9 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography'
+import Typography from '@material-ui/core/Typography';
+import Badge from '@material-ui/core/Badge';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,15 +39,11 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     width: '6rem',
-    padding: 6
+    padding: theme.spacing(1, 0)
   },
   cell: {
-    border: 0,
     width: '6rem',
-    paddingTop: 0,
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 10
+    padding: theme.spacing(2, 0, 1, 0)
   },
   headerAssignments: {
     padding: 0
@@ -64,12 +62,29 @@ const useStyles = makeStyles((theme) => ({
   },
   myClass: {
     height: theme.spacing(2)
+  }, 
+  chip: {
+    padding: 0,
+    height: 16,
+    color: wagner.coral,
+    backgroundColor: theme.palette.background.paper,
   }
 }));
 
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    right: 5,
+    top: 53,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    backgroundColor: theme.palette.background.paper,
+    color: wagner.coral
+  },
+}))(Badge);
+
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isDayInPast, isClassDay, today } = useUser()
+  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isDayInPast, isClassDay, today, getClassTime } = useUser()
   const student = students[selectedStudent];
 
   const [checked, setChecked] = React.useState(getInitialChecked());
@@ -106,14 +121,24 @@ export default function Weekly() {
     } 
   };
 
+  function renderClassDay() {
+    return <Chip color='secondary' size="small" icon={<StarIcon />} label={getClassTime()} className={classes.chip} />
+  }
+
   function renderDayOfWeek(dayName, dayIndex) {
     return ( dayIndex === (moment().isoWeekday() % 7) ? 
       <div className={classes.root}>
         <Avatar className={classes.avatar}>
-          {dayName}
+          <StyledBadge badgeContent={renderClassDay()} invisible={!isClassDay(dayIndex)}>
+            {dayName}
+          </StyledBadge>
         </Avatar> 
       </div>:
-      <Typography color={isDayInPast(dayIndex) ? "secondary" : "inherit"}>{dayName}</Typography>
+      <Typography component={'div'} color={isDayInPast(dayIndex) ? "secondary" : "inherit"}>
+        <StyledBadge badgeContent={renderClassDay()} invisible={!isClassDay(dayIndex)}>
+         {dayName}
+        </StyledBadge>
+      </Typography>
     )
   }
 
@@ -135,10 +160,6 @@ export default function Weekly() {
               <TableRow>
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <TableCell key={day} align='center' className={classes.cell}>
-                    {isClassDay(day) ? 
-                      <Box className={classes.myClass}>
-                        <Typography color='secondary' variant='caption'><StarIcon color='secondary' style={{ fontSize: 13 }}/>{students[selectedStudent].class}</Typography>
-                      </Box> : <Box className={classes.myClass}></Box>}
                       {isWeekdayComplete(day) && (isDayInPast(day) || day === today()) ? 
                         <TrophyIcon style={{ color: wagner.green }} fontSize="large" /> : isDayInPast(day) ? <ClearIcon color='secondary' fontSize="large"/> : ""}
                   </TableCell>
