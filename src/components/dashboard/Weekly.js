@@ -6,9 +6,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import ClearIcon from '@material-ui/icons/Clear'
-import TrophyIcon from '@material-ui/icons/EmojiEvents'
-import Avatar from '@material-ui/core/Avatar'
+import StarIcon from '@material-ui/icons/Star';
+import ClearIcon from '@material-ui/icons/Clear';
+import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import Avatar from '@material-ui/core/Avatar';
 import moment from 'moment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,21 +20,9 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import { wagner } from '../../theme';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography'
-
-function renderDayOfWeek(dayName, dayIndex) {
-  const classes = useStyles();
-
-  return ( dayIndex === (moment().isoWeekday() % 7) ? 
-    <div className={classes.root}>
-      <Avatar className={classes.avatar}>
-        {dayName}
-      </Avatar> 
-    </div>:
-    dayName
-  )
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,13 +36,16 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 0)
   },
   header: {
-    width: '4rem',
+    width: '6rem',
     padding: 6
   },
   cell: {
     border: 0,
-    width: '4rem',
-    padding: 6
+    width: '6rem',
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingBottom: 10
   },
   headerAssignments: {
     padding: 0
@@ -69,12 +61,15 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(5),
     height: theme.spacing(5),
     backgroundColor: wagner.blue,
+  },
+  myClass: {
+    height: theme.spacing(2)
   }
 }));
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isTodayComplete, today } = useUser()
+  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isDayInPast, isClassDay, today } = useUser()
   const student = students[selectedStudent];
 
   const [checked, setChecked] = React.useState(getInitialChecked());
@@ -111,6 +106,17 @@ export default function Weekly() {
     } 
   };
 
+  function renderDayOfWeek(dayName, dayIndex) {
+    return ( dayIndex === (moment().isoWeekday() % 7) ? 
+      <div className={classes.root}>
+        <Avatar className={classes.avatar}>
+          {dayName}
+        </Avatar> 
+      </div>:
+      <Typography color={isDayInPast(dayIndex) ? "secondary" : "inherit"}>{dayName}</Typography>
+    )
+  }
+
   return (
     <Grid container spacing={1}>
 
@@ -128,9 +134,14 @@ export default function Weekly() {
             <TableBody>
               <TableRow>
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-                  <TableCell key={day} align='center' className={classes.cell}>{isWeekdayComplete(day) ? 
-                    <TrophyIcon style={{ color: wagner.green }} fontSize="large"/> : day === today() ? "" : <ClearIcon color='secondary' fontSize="large"/>
-                  }</TableCell>
+                  <TableCell key={day} align='center' className={classes.cell}>
+                    {isClassDay(day) ? 
+                      <Box className={classes.myClass}>
+                        <Typography color='secondary' variant='caption'><StarIcon color='secondary' style={{ fontSize: 13 }}/>{students[selectedStudent].class}</Typography>
+                      </Box> : <Box className={classes.myClass}></Box>}
+                      {isWeekdayComplete(day) && (isDayInPast(day) || day === today()) ? 
+                        <TrophyIcon style={{ color: wagner.green }} fontSize="large" /> : isDayInPast(day) ? <ClearIcon color='secondary' fontSize="large"/> : ""}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableBody>

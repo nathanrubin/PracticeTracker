@@ -117,6 +117,25 @@ export function UserProvider({ children }) {
      });
   }
 
+  function isDayInPast(day) {
+    const classDayStr = students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
+    const classDay = moment().day(classDayStr).format('d')
+    const now = today()
+    if (now <= classDay && (day < now || classDay < day)) {
+      return true
+    }
+    if (classDay < day && day < now) {
+      return true
+    }
+
+    return false;
+  }
+
+  function isClassDay(day) {
+    const classDay= students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
+    return classDay === moment().day(day).format('ddd').toLowerCase();
+  }
+
   function isWeekdayComplete(day) {
       return students[selectedStudent].weekdaysComplete.includes(day);
   }
@@ -138,7 +157,9 @@ export function UserProvider({ children }) {
     removeToday,
     isWeekdayComplete,
     isTodayComplete,
-    today
+    isClassDay,
+    today,
+    isDayInPast
   }
 
   return (
