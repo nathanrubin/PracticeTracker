@@ -82,6 +82,17 @@ const StyledBadge = withStyles((theme) => ({
   },
 }))(Badge);
 
+const StyledAvatarBadge = withStyles((theme) => ({
+  badge: {
+    right: 19,
+    top: 60,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    backgroundColor: theme.palette.background.paper,
+    color: wagner.coral
+  },
+}))(Badge);
+
 export default function Weekly() {
   const classes = useStyles();
   const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isDayInPast, isClassDay, today, getClassTime } = useUser()
@@ -128,11 +139,11 @@ export default function Weekly() {
   function renderDayOfWeek(dayName, dayIndex) {
     return ( dayIndex === (moment().isoWeekday() % 7) ? 
       <div className={classes.root}>
-        <Avatar className={classes.avatar}>
-          <StyledBadge badgeContent={renderClassDay()} invisible={!isClassDay(dayIndex)}>
-            {dayName}
-          </StyledBadge>
-        </Avatar> 
+        <StyledAvatarBadge badgeContent={renderClassDay()} invisible={!isClassDay(dayIndex)}>
+          <Avatar className={classes.avatar}>
+              {dayName}
+          </Avatar> 
+        </StyledAvatarBadge>
       </div>:
       <Typography component={'div'} color={isDayInPast(dayIndex) ? "secondary" : "inherit"}>
         <StyledBadge badgeContent={renderClassDay()} invisible={!isClassDay(dayIndex)}>

@@ -132,7 +132,7 @@ export function UserProvider({ children }) {
   }
 
   function isClassDay(day) {
-    const classDay= students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
+    const classDay= students[selectedStudent].class.trim().split(" ")[0].toLowerCase();
     return classDay === moment().day(day).format('ddd').toLowerCase();
   }
 
