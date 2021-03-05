@@ -225,7 +225,7 @@ export default function Dashboard() {
           <Weekly />
         </Container>
 
-          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog}>
+          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students[selectedStudent]}>
           <DialogTitle>Add Student</DialogTitle>
           <DialogContent>
             <form className={classes.addStudent} noValidate autoComplete="off">
