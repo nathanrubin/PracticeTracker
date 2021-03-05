@@ -19,6 +19,7 @@ function App() {
 
   const authRoutes = () => (
     <UserProvider>
+      {console.log("loading authRoutes")}
       <Switch>
         <Route exact path="/" component={Dashboard} />
         <Redirect from="/**" to="/" />

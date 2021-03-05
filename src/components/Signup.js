@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import Alert from '@material-ui/lab/Alert';
 import { useAuth } from "../contexts/AuthContext"
 import { Link, useHistory } from "react-router-dom"
 
@@ -70,6 +71,7 @@ export default function Signup() {
         <Typography component="h1" variant="h5">
           Create your account
         </Typography>
+        {error && <Alert severity="error">{error}</Alert>}
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

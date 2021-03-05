@@ -8,6 +8,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Alert from '@material-ui/lab/Alert';
 
 import { useAuth } from "../contexts/AuthContext"
 import { useHistory, Link } from "react-router-dom"
@@ -68,6 +69,7 @@ export default function LogIn() {
         <Typography component="h1" variant="h5">
           Log in to Practice Tracker
         </Typography>
+        {error && <Alert severity="error">{error}</Alert>}
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
             variant="outlined"

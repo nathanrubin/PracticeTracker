@@ -14,12 +14,17 @@ import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import MenuIcon from '@material-ui/icons/Menu';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Close from '@material-ui/icons/Close';
 import { SideBar } from './SideBar';
 import Weekly from './Weekly';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button'
 
 import Menu from '@material-ui/core/Menu';
 
@@ -88,14 +93,26 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  addStudent: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  }
 }));
 
 export default function Dashboard() {
   const classes = useStyles();
-  const { students, selectedStudent, selectStudent, assignments } = useUser()
+  const { students, selectedStudent, selectStudent, assignments, saveStudent } = useUser()
   const [error, setError] = useState("")
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [selectedTeacher, setSelectedTeacher] = React.useState('');
+  const [selectedClass, setSelectedClass] = React.useState('');
+  const [selectedTime, setSelectedTime] = React.useState('');
+  const firstRef = useRef()
+  const lastRef = useRef()
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -113,6 +130,34 @@ export default function Dashboard() {
   };
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const addStudentOpen = () => {
+    console.log("opening adding student")
+    setOpenDialog(true);
+  }
+  const addStudentClose = () => {
+    console.log("class add student")
+    setOpenDialog(false);
+    setAnchorEl(null)
+  }
+  const saveNewStudent = () => {
+    console.log("saving student: " + firstRef.current.value + " " + lastRef.current.value + " " + selectedTeacher + " " + selectedClass + " " + selectedTime);
+    setOpenDialog(false);
+    setAnchorEl(null)
+    saveStudent(firstRef.current.value, lastRef.current.value, selectedTeacher, selectedClass, selectedTime)
+  }
+  const isEnabled = firstRef.current && firstRef.current.value && lastRef.current && lastRef.current.value && selectedTeacher && selectedClass && selectedTime;
+  const teachers = ["Mr. Brett"];
+  const teacherClasses = ["mon", "fri"];
+  const classTimes = ["3:15p", "4:00p"];
+  const handleTeacherChange = (event) => {
+    setSelectedTeacher(event.target.value);
+  };
+  const handleClassChange = (event) => {
+    setSelectedClass(event.target.value);
+  };
+  const handleTimeChange = (event) => {
+    setSelectedTime(event.target.value);
   };
 
   return (
@@ -152,6 +197,9 @@ export default function Dashboard() {
                 {first}
               </MenuItem>
             ))}
+            <MenuItem key="add-student" value="add-student" onClick={() => addStudentOpen()}>
+              Add Student
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -159,7 +207,7 @@ export default function Dashboard() {
       <div className={classes.list}>
         <DialogTitle disableTypography className={classes.drawerTitle}>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {students[selectedStudent].first}'s Profile
+            {students[selectedStudent] ? students[selectedStudent].first : "Student"}'s Profile
           </Typography>
           <IconButton onClick={toggleDrawer(false)}>
               <Close />
@@ -176,6 +224,42 @@ export default function Dashboard() {
           {error && <Alert severity="error">{error}</Alert>}
           <Weekly />
         </Container>
+
+          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog}>
+          <DialogTitle>Add Student</DialogTitle>
+          <DialogContent>
+            <form className={classes.addStudent} noValidate autoComplete="off">
+              <TextField autoFocus required id="first-name" label="First name" inputRef={firstRef}/>
+              <TextField required id="last-name" label="Last name" inputRef={lastRef}/>
+              <TextField required id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange} helperText="Please select your teacher">
+                {teachers.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField required id="class" label="Classes" select value={selectedClass} onChange={handleClassChange} helperText="Please select your class">
+                {teacherClasses.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField required id="times" label="Times" select value={selectedTime} onChange={handleTimeChange} helperText="Please select your time">
+                {classTimes.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => saveNewStudent()} color="primary" disabled={!isEnabled}>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </main>
     </div>
   );

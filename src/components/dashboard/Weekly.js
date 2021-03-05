@@ -24,10 +24,10 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import Chip from '@material-ui/core/Chip';
-import stickers from '../stickers';
+import {stickers, getImgByTitle} from '../stickers';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button'
@@ -75,6 +75,15 @@ const useStyles = makeStyles((theme) => ({
     color: wagner.coral,
     backgroundColor: theme.palette.background.paper,
   },
+  stickerContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  avatarSticker: {
+    width: 40,
+    height: 40
+  }
 }));
 
 const StyledBadge = withStyles((theme) => ({
@@ -101,15 +110,15 @@ const StyledAvatarBadge = withStyles((theme) => ({
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addToday, removeToday, isWeekdayComplete, isDayInPast, isClassDay, today, getClassTime } = useUser()
-  const student = students[selectedStudent];
+  const { students, selectedStudent, assignments, addToday, removeToday, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime } = useUser()
+  const student = students[selectedStudent]? students[selectedStudent] : {first: "student"};
 
-  const [checked, setChecked] = React.useState(getInitialChecked());
+  const [checked, setChecked] = React.useState(setInitialChecked());
 
-  function getInitialChecked() {
+  function setInitialChecked() {
     var array = []
     students.map(st => {
-      if (st.weekdaysComplete.includes(today())) {
+      if (st.myStickers[today()]) {
         assignments.map((value, id) => {
           const checkId = `${st.first}-${id}`;
           array.push(checkId)
@@ -134,7 +143,7 @@ export default function Weekly() {
 
     // if all our checked, add day as complete
     if (newChecked.filter(name => name.includes(student.first)).length === assignments.length) {
-      addToday()
+      handleOpen(today())
     } 
   };
 
@@ -159,17 +168,40 @@ export default function Weekly() {
     )
   }
 
-  const [open, setOpen] = React.useState(false);
+  function renderSticker(day) {
+    const stickerName = students[selectedStudent]? students[selectedStudent].myStickers[day] : "";
+    const img = getImgByTitle(stickerName);
+    var stickerEl = "";
+    if (isDayInPast(day) && img === undefined) {
+      stickerEl = <ClearIcon color='secondary' className={classes.avatarSticker} onClick={() => handleOpen(day)}/>
+    } else if ((isDayInPast(day) || day === today()) && img !== undefined){
+      stickerEl = <Avatar src={img} className={classes.avatarSticker} onClick={() => handleOpen(day)} />
+    } else {
+      stickerEl = ""
+    }
+    return <div className={classes.sticker}>{stickerEl}</div>
+  }
 
-  const handleClickOpen = () => {
+  const [open, setOpen] = React.useState(false);
+  const [stickerDay, setStickerDay] = React.useState();
+
+  const handleOpen = (day) => {
+    setStickerDay(day);
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  const handleStickerClick = (sticker) => {
-      console.log("image selected: " + sticker);
+  const handleAddSticker = (sticker) => {
+      addSticker(sticker, stickerDay)
       setOpen(false);
+  }
+  const handlRemoveSticker = () => {
+    removeSticker(stickerDay);
+    if (stickerDay == today()) {
+      setChecked([]);
+    }
+    setOpen(false);
   }
 
   return (
@@ -190,8 +222,7 @@ export default function Weekly() {
               <TableRow>
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <TableCell key={day} align='center' className={classes.cell}>
-                      {isWeekdayComplete(day) && (isDayInPast(day) || day === today()) ? 
-                        <TrophyIcon style={{ color: wagner.green }} fontSize="large" onClick={handleClickOpen} /> : isDayInPast(day) ? <ClearIcon color='secondary' fontSize="large" onClick={handleClickOpen}/> : ""}
+                    {renderSticker(day)}
                   </TableCell>
                 ))}
               </TableRow>
@@ -241,16 +272,18 @@ export default function Weekly() {
       </Grid>
 
       <Dialog onClose={handleClose} aria-labelledby="sticker-select" open={open}>
-        <DialogTitle id="sticker-select" onClose={handleClose}>Pick a sticker:</DialogTitle>
         <DialogContent>
+          <DialogContentText onClose={handleClose}>
+            Pick a sticker:
+          </DialogContentText>
             {stickers.map((tile) => (
-                <IconButton aria-label={`${tile.title}`} onClick={() => handleStickerClick(tile.img)} key={tile.img}>
+                <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img}>
                     <Avatar src={tile.img} />
                 </IconButton>
             ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() => handlRemoveSticker()} color="primary">
             Remove
           </Button>
         </DialogActions>

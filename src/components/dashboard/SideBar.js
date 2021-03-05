@@ -48,7 +48,7 @@ export function SideBar ({student}) {
           <Typography className={classes.title} color="textSecondary" gutterBottom>Class: </Typography>
         </Grid>
         <Grid item xs={8}>
-          <Typography className={classes.title} color="secondary" gutterBottom>{student.teacher} - {student.class}</Typography>
+          <Typography className={classes.title} color="secondary" gutterBottom>{student? student.teacher : ""} - {student? student.class: ""}</Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Songs: </Typography>

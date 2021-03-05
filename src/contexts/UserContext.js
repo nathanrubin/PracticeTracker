@@ -17,7 +17,7 @@ export function UserProvider({ children }) {
   const [classes, setClasses] = useState([])
   const [assignments, setAssignments] = useState([])
   const [loadingStudents, setLoadingStudents] = useState(true)
-  const [loadingClasses, setLoadingClasses] = useState(true)
+  const [loadingClasses, setLoadingClasses] = useState(false)
 
   useEffect(() => {
     firestore.collection("students").where("email", "==", currentUser.email)
@@ -38,23 +38,32 @@ export function UserProvider({ children }) {
               stickerPack: doc.data().stickerPack,
               teacher: doc.data().teacher,
               teacherStickers: doc.data().teacherStickers,
-              weekdaysComplete: doc.data().weekdaysComplete
+              weekdaysComplete: doc.data().weekdaysComplete,
+              myStickers: doc.data().myStickers ? doc.data().myStickers : []
             }
+            emptyStickers.forEach((empty, id) => {
+              if(details.myStickers[id] === undefined) {
+                details.myStickers[id] = empty 
+              }
+            });
             dbStudents.push(details);
             loadClass(details.teacher, details.class);
+            setLoadingClasses(true);
         });
         if (dbStudents.length > 0){
           setStudents(dbStudents)
           setSelectedStudent(0)
         }
-        setLoadingStudents(false)
       }).catch((error) => {
           console.log("Error getting document:", error);
-          setLoadingStudents(false)
+      }).finally(() => {
+        console.log("student query ended.");
+        setLoadingStudents(false)
       });
     }, [])
 
   function loadClass(teacher, classDateTime) {
+    console.log("loading classes");
     firestore.collection("classes").where("teacher", "==", teacher).where("class", "==", classDateTime)
     .get()
     .then((querySnapshot) => {
@@ -72,10 +81,11 @@ export function UserProvider({ children }) {
         });
         setClasses(loadedClasses)
         setAssignments(loadedClasses[0].assignments)
-        setLoadingClasses(false)
         }).catch((error) => {
             console.log("Error getting document:", error);
-            setLoadingClasses(false)
+        }).finally(() => {
+          console.log("classes query ended.");
+          setLoadingClasses(false)
         });
     return
   }
@@ -117,7 +127,57 @@ export function UserProvider({ children }) {
      });
   }
 
+  const emptyStickers = ["","","","","","",""];
+  function addSticker(stickerTitle, day) {
+    const studentId = students[selectedStudent].id;
+    students[selectedStudent].myStickers[day] = stickerTitle;
+    firestore.collection("students").doc(studentId).update( {
+        myStickers: students[selectedStudent].myStickers
+     });
+  }
+
+  function removeSticker(day) {
+    const studentId = students[selectedStudent].id;
+    students[selectedStudent].myStickers[day] = "";
+    firestore.collection("students").doc(studentId).update( {
+        myStickers: students[selectedStudent].myStickers
+     });
+  }
+
+  function saveStudent(first, last, teacher, classDay, time) {
+    const studentId = currentUser.email + "-" + first;
+    var newStudent = {
+        first: first,
+        last: last,
+        teacher: teacher,
+        class: classDay + " " + time,
+        email: currentUser.email,
+        displayName: first,
+        stickerPack: "",
+        teacherStickers: [],
+        weekdaysComplete: [],
+        myStickers: []
+    }
+    firestore.collection("students").doc(studentId).set(newStudent)
+    .then(() => {
+        console.log("Student successfully saved!");
+        newStudent.id = studentId;
+        students.push(newStudent)
+        if (!selectedStudent) {
+          setSelectedStudent(0)
+        }
+        loadClass(newStudent.teacher, newStudent.class);
+    })
+    .catch((error) => {
+        console.error("Error saving student document: ", error);
+    });
+  }
+
   function isDayInPast(day) {
+    if (!students[selectedStudent]) {
+      return false;
+    }
+
     const classDayStr = students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
     const classDay = moment().day(classDayStr).format('d')
     const now = today()
@@ -132,6 +192,9 @@ export function UserProvider({ children }) {
   }
 
   function isClassDay(day) {
+    if (!students[selectedStudent]) {
+      return false;
+    }
     const classDay= students[selectedStudent].class.trim().split(" ")[0].toLowerCase();
     return classDay === moment().day(day).format('ddd').toLowerCase();
   }
@@ -149,7 +212,7 @@ export function UserProvider({ children }) {
  }
 
  function getClassTime() {
-   return students[selectedStudent].class.trim().split(" ")[1].toLowerCase();
+   return students[selectedStudent]? students[selectedStudent].class.trim().split(" ")[1].toLowerCase() : "";
  }
 
   const value = {
@@ -159,12 +222,15 @@ export function UserProvider({ children }) {
     selectStudent,
     addToday,
     removeToday,
+    addSticker,
+    removeSticker,
     isWeekdayComplete,
     isTodayComplete,
     isClassDay,
     today,
     isDayInPast,
-    getClassTime
+    getClassTime,
+    saveStudent
   }
 
   return (
