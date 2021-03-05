@@ -10,7 +10,7 @@ workbox.routing.registerRoute(/\.(?:png|jpg|jpeg|svg|gif)$/,
     cacheName: 'image-cache',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 20,
+        maxEntries: 40,
         maxAgeSeconds: 7 * 24 * 60 * 60
       })
     ]

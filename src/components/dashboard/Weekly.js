@@ -21,10 +21,16 @@ import { wagner } from '../../theme';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import Chip from '@material-ui/core/Chip';
+import stickers from '../stickers';
+import IconButton from '@material-ui/core/IconButton';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     height: 16,
     color: wagner.coral,
     backgroundColor: theme.palette.background.paper,
-  }
+  },
 }));
 
 const StyledBadge = withStyles((theme) => ({
@@ -153,6 +159,19 @@ export default function Weekly() {
     )
   }
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleStickerClick = (sticker) => {
+      console.log("image selected: " + sticker);
+      setOpen(false);
+  }
+
   return (
     <Grid container spacing={1}>
 
@@ -172,7 +191,7 @@ export default function Weekly() {
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <TableCell key={day} align='center' className={classes.cell}>
                       {isWeekdayComplete(day) && (isDayInPast(day) || day === today()) ? 
-                        <TrophyIcon style={{ color: wagner.green }} fontSize="large" /> : isDayInPast(day) ? <ClearIcon color='secondary' fontSize="large"/> : ""}
+                        <TrophyIcon style={{ color: wagner.green }} fontSize="large" onClick={handleClickOpen} /> : isDayInPast(day) ? <ClearIcon color='secondary' fontSize="large" onClick={handleClickOpen}/> : ""}
                   </TableCell>
                 ))}
               </TableRow>
@@ -220,7 +239,23 @@ export default function Weekly() {
             </List>
           </Card>
       </Grid>
-      
+
+      <Dialog onClose={handleClose} aria-labelledby="sticker-select" open={open}>
+        <DialogTitle id="sticker-select" onClose={handleClose}>Pick a sticker:</DialogTitle>
+        <DialogContent>
+            {stickers.map((tile) => (
+                <IconButton aria-label={`${tile.title}`} onClick={() => handleStickerClick(tile.img)} key={tile.img}>
+                    <Avatar src={tile.img} />
+                </IconButton>
+            ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Grid>
   );
 }
