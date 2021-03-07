@@ -19,6 +19,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    width: '100%'
+  },
+  alert: {
+    marginTop: theme.spacing(1), 
+    width: '100%'
   },
   avatar: {
     margin: theme.spacing(1),
@@ -67,8 +72,8 @@ export default function Signup() {
         <Typography component="h1" variant="h5">
           Create your account
         </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
-        {verify && <Alert severity="info" 
+        {error && <Alert severity="error" className={classes.alert}>{error}</Alert>}
+        {verify && <Alert severity="success" className={classes.alert}
           action={<Button color="inherit" size="small" onClick={() => window.location.reload(false)}>done</Button>}>{verify}</Alert>}
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>

@@ -31,7 +31,7 @@ export function UserProvider({ children }) {
 
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+            //console.log(doc.id, " => ", doc.data());
             const details = {
               id: doc.id,
               first: doc.data().first,
@@ -71,7 +71,7 @@ export function UserProvider({ children }) {
     .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+            //console.log(doc.id, " => ", doc.data());
             const details = {
                 id: doc.id,
                 email: doc.data().email,

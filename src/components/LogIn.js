@@ -19,6 +19,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    width: '100%',
+  },
+  alert: {
+    marginTop: theme.spacing(1), 
+    width: '100%'
   },
   avatar: {
     margin: theme.spacing(1),
@@ -72,8 +77,8 @@ export default function LogIn() {
         <Typography component="h1" variant="h5">
           Log in to Practice Tracker
         </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
-        {verify && <Alert severity="info" 
+        {error && <Alert severity="error" className={classes.alert}>{error}</Alert>}
+        {verify && <Alert severity="info" className={classes.alert}
           action={<Button color="inherit" size="small" onClick={() => window.location.reload(false)}>done</Button>}>{verify}</Alert>}
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
