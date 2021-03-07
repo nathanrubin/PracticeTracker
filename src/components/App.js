@@ -19,7 +19,6 @@ function App() {
 
   const authRoutes = () => (
     <UserProvider>
-      {console.log("loading authRoutes")}
       <Switch>
         <Route exact path="/" component={Dashboard} />
         <Redirect from="/**" to="/" />
@@ -39,7 +38,7 @@ function App() {
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
       <Router>
-        {currentUser? authRoutes():routes()}
+        {currentUser && currentUser.emailVerified? authRoutes():routes()}
       </Router>
     </ThemeProvider>
   )

@@ -7,10 +7,8 @@ import { AuthProvider } from "./contexts/AuthContext"
 const rootNode = document.querySelector('#root')
 
 ReactDOM.render(
-  <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </React.StrictMode>,
+  <AuthProvider>
+    <App />
+  </AuthProvider>,
   rootNode
 );

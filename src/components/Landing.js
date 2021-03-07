@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react"
+import React from "react"
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import wagnerLogo from "/icons/icon-512x512.png";
-
 import { Link } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
-  
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
@@ -43,7 +41,6 @@ export default function SignIn() {
         <Typography variant="body2" color="textSecondary" className={classes.welcome} align="center">
           Log in to continue
         </Typography>
-          
           <Button
             type="submit"
             fullWidth

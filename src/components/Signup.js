@@ -11,7 +11,7 @@ import Container from '@material-ui/core/Container';
 
 import Alert from '@material-ui/lab/Alert';
 import { useAuth } from "../contexts/AuthContext"
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,14 +37,12 @@ const useStyles = makeStyles((theme) => ({
 export default function Signup() {
   const classes = useStyles();
 
-  const studentFirstRef = useRef()
-  const studentLastRef = useRef()
   const emailRef = useRef()
   const passwordRef = useRef()
-  const { signup } = useAuth()
+  const { signup, sendVerification } = useAuth()
   const [error, setError] = useState("")
+  const [verify, setVerify] = useState("")
   const [loading, setLoading] = useState(false)
-  const history = useHistory()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -53,13 +51,11 @@ export default function Signup() {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
-      history.push("/")
-    } catch {
-      setError("Failed to create an account")
+      setVerify("Please verify your email.")
+    } catch(error) {
+      setError("Failed to create an account. " + error.message)
       setLoading(false)
-    }
-
-
+    };
   }
 
   return (
@@ -72,6 +68,8 @@ export default function Signup() {
           Create your account
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
+        {verify && <Alert severity="info" 
+          action={<Button color="inherit" size="small" onClick={() => window.location.reload(false)}>done</Button>}>{verify}</Alert>}
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

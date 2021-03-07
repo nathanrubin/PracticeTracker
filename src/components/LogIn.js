@@ -11,7 +11,7 @@ import Container from '@material-ui/core/Container';
 import Alert from '@material-ui/lab/Alert';
 
 import { useAuth } from "../contexts/AuthContext"
-import { useHistory, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,24 +40,27 @@ export default function LogIn() {
   const emailRef = useRef()
   const passwordRef = useRef()
   const { currentUser, login } = useAuth()
+  const [verify, setVerify] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const history = useHistory()
 
   async function handleSubmit(e) {
     e.preventDefault()
 
     try {
       setError("")
+      setVerify("")
       setLoading(true)
-      
-      await login(emailRef.current.value, passwordRef.current.value)
-      history.push('/')
-    } catch {
-      setError("Failed to log in")
-      setLoading(false)
-    }
 
+      await login(emailRef.current.value, passwordRef.current.value)
+      if (currentUser && !currentUser.emailVerified) {
+        setVerify("Please verify your email.")
+      }
+
+    } catch {
+      setError("Failed to log in. ")
+      setLoading(false)
+    } 
   }
 
   return (
@@ -70,6 +73,8 @@ export default function LogIn() {
           Log in to Practice Tracker
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
+        {verify && <Alert severity="info" 
+          action={<Button color="inherit" size="small" onClick={() => window.location.reload(false)}>done</Button>}>{verify}</Alert>}
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
             variant="outlined"

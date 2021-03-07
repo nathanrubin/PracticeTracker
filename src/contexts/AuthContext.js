@@ -12,7 +12,15 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   function signup(email, password) {
-    return auth.createUserWithEmailAndPassword(email, password)
+    return auth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
+      // Signed in 
+      var user = userCredential.user;
+      console.log("useContext signup: " + user.email);
+      if (user && !user.emailVerified) {
+        console.log("Initial load and users email is not verified. Send verification.")
+        user.sendEmailVerification()
+      }
+    })
   }
 
   function login(email, password) {
@@ -35,15 +43,16 @@ export function AuthProvider({ children }) {
     return currentUser.updatePassword(password)
   }
 
+  function sendEmailVerification() {
+    return currentUser.sendEmailVerification()
+  }
+
   useEffect(() => {
-    console.log("authContext - onAuthStateChange");
     const unsubscribe = auth.onAuthStateChanged(user => {
-      console.log("authContext - setCurrentUser - " + user);
-      setCurrentUser(user)
       setLoading(false)
+      setCurrentUser(user)
     })
 
-    console.log("authContext - unsubscribe")
     return unsubscribe
   }, [])
 
@@ -54,12 +63,13 @@ export function AuthProvider({ children }) {
     logout,
     resetPassword,
     updateEmail,
-    updatePassword
+    updatePassword,
+    sendEmailVerification
   }
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+        {!loading && children}
     </AuthContext.Provider>
   )
 }

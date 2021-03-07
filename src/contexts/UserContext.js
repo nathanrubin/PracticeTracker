@@ -20,6 +20,10 @@ export function UserProvider({ children }) {
   const [loadingClasses, setLoadingClasses] = useState(false)
 
   useEffect(() => {
+    if (!currentUser) {
+      return 
+    }
+
     firestore.collection("students").where("email", "==", currentUser.email)
     .get()
     .then((querySnapshot) => {
@@ -57,13 +61,11 @@ export function UserProvider({ children }) {
       }).catch((error) => {
           console.log("Error getting document:", error);
       }).finally(() => {
-        console.log("student query ended.");
         setLoadingStudents(false)
       });
     }, [])
 
   function loadClass(teacher, classDateTime) {
-    console.log("loading classes");
     firestore.collection("classes").where("teacher", "==", teacher).where("class", "==", classDateTime)
     .get()
     .then((querySnapshot) => {
@@ -84,7 +86,6 @@ export function UserProvider({ children }) {
         }).catch((error) => {
             console.log("Error getting document:", error);
         }).finally(() => {
-          console.log("classes query ended.");
           setLoadingClasses(false)
         });
     return
@@ -160,7 +161,7 @@ export function UserProvider({ children }) {
     }
     firestore.collection("students").doc(studentId).set(newStudent)
     .then(() => {
-        console.log("Student successfully saved!");
+        console.log("Saved student");
         newStudent.id = studentId;
         students.push(newStudent)
         if (!selectedStudent) {
