@@ -110,7 +110,7 @@ const StyledAvatarBadge = withStyles((theme) => ({
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addToday, removeToday, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime } = useUser()
+  const { students, selectedStudent, assignments, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime } = useUser()
   const student = students[selectedStudent]? students[selectedStudent] : {first: "student"};
 
   const [checked, setChecked] = React.useState(setInitialChecked());
@@ -136,7 +136,7 @@ export default function Weekly() {
       newChecked.push(value);
     } else {
       newChecked.splice(currentIndex, 1);
-      removeToday()
+      removeSticker(today());
     }
 
     setChecked(newChecked);
@@ -179,7 +179,7 @@ export default function Weekly() {
     } else {
       stickerEl = ""
     }
-    return <div className={classes.sticker}>{stickerEl}</div>
+    return <div className={classes.stickerContainer}>{stickerEl}</div>
   }
 
   const [open, setOpen] = React.useState(false);

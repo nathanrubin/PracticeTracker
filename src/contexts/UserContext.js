@@ -108,40 +108,30 @@ export function UserProvider({ children }) {
     return [...a, ...not(b, a)];
   }
 
-  function addToday() {
-    const studentId = students[selectedStudent].id;
-    const update = union(students[selectedStudent].weekdaysComplete, [today()]);
-    students[selectedStudent].weekdaysComplete = update
-    firestore.collection("students").doc(studentId).update( {
-        weekdaysComplete: update
-     });
-  }
-
-  function removeToday() {
-    const studentId = students[selectedStudent].id;
-    const index = students[selectedStudent].weekdaysComplete.indexOf(today());
-    if (index > -1) {
-        students[selectedStudent].weekdaysComplete.splice(index, 1);
-    }
-    firestore.collection("students").doc(studentId).update( {
-        weekdaysComplete: students[selectedStudent].weekdaysComplete
-     });
-  }
-
   const emptyStickers = ["","","","","","",""];
   function addSticker(stickerTitle, day) {
     const studentId = students[selectedStudent].id;
+    students[selectedStudent].weekdaysComplete = union(students[selectedStudent].weekdaysComplete, [day]);
     students[selectedStudent].myStickers[day] = stickerTitle;
     firestore.collection("students").doc(studentId).update( {
-        myStickers: students[selectedStudent].myStickers
+        myStickers: students[selectedStudent].myStickers,
+        weekdaysComplete: students[selectedStudent].weekdaysComplete
      });
   }
 
   function removeSticker(day) {
     const studentId = students[selectedStudent].id;
     students[selectedStudent].myStickers[day] = "";
+
+    // backwards compatibility - remove from weekday
+    const index = students[selectedStudent].weekdaysComplete.indexOf(day);
+    if (index > -1) {
+        students[selectedStudent].weekdaysComplete.splice(index, 1);
+    }
+
     firestore.collection("students").doc(studentId).update( {
-        myStickers: students[selectedStudent].myStickers
+        myStickers: students[selectedStudent].myStickers,
+        weekdaysComplete: students[selectedStudent].weekdaysComplete
      });
   }
 
@@ -200,14 +190,6 @@ export function UserProvider({ children }) {
     return classDay === moment().day(day).format('ddd').toLowerCase();
   }
 
-  function isWeekdayComplete(day) {
-      return students[selectedStudent].weekdaysComplete.includes(day);
-  }
-
-  function isTodayComplete() {
-    return isWeekdayComplete(today())
-  }
-
  function today() {
     return moment().isoWeekday() % 7
  }
@@ -221,12 +203,8 @@ export function UserProvider({ children }) {
     selectedStudent,
     assignments,
     selectStudent,
-    addToday,
-    removeToday,
     addSticker,
     removeSticker,
-    isWeekdayComplete,
-    isTodayComplete,
     isClassDay,
     today,
     isDayInPast,
