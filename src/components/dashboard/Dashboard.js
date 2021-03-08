@@ -103,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const classes = useStyles();
-  const { students, selectedStudent, selectStudent, assignments, saveStudent } = useUser()
+  const { students, selectedStudent, selectStudent, assignments, saveStudent, teachers, getTeacherClassDays, getClassTimes } = useUser()
   const [error, setError] = useState("")
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -111,6 +111,10 @@ export default function Dashboard() {
   const [selectedTeacher, setSelectedTeacher] = React.useState('');
   const [selectedClass, setSelectedClass] = React.useState('');
   const [selectedTime, setSelectedTime] = React.useState('');
+  const [teacherClasses, setTeacherClasses] = React.useState([]);
+  const [classTimes, setClassTimes] = React.useState([]);
+  const [isEnabled, setIsEnabled] = React.useState(false);
+  const [validFirst, setValidFirst] = React.useState('');
   const firstRef = useRef()
   const lastRef = useRef()
 
@@ -146,18 +150,26 @@ export default function Dashboard() {
     setAnchorEl(null)
     saveStudent(firstRef.current.value, lastRef.current.value, selectedTeacher, selectedClass, selectedTime)
   }
-  const isEnabled = firstRef.current && firstRef.current.value && lastRef.current && lastRef.current.value && selectedTeacher && selectedClass && selectedTime;
-  const teachers = ["Mr. Brett"];
-  const teacherClasses = ["mon", "fri"];
-  const classTimes = ["3:15p", "4:00p"];
+  
   const handleTeacherChange = (event) => {
     setSelectedTeacher(event.target.value);
+    setTeacherClasses(getTeacherClassDays(event.target.value))
+    handleValidation()
   };
   const handleClassChange = (event) => {
     setSelectedClass(event.target.value);
+    setClassTimes(getClassTimes(selectedTeacher, event.target.value))
+    handleValidation()
   };
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
+    handleValidation()
+  };
+  const handleValidation = () => {
+    const isValid = firstRef.current.value && lastRef.current.value && selectedTeacher && selectedClass && selectedTime
+    const isValidFirst = students.filter(s => s.first === firstRef.current.value).length == 0
+    setIsEnabled(isValid && isValidFirst);
+    setValidFirst(isValidFirst ? "" : "First name must be unique.");
   };
 
   return (
@@ -228,24 +240,24 @@ export default function Dashboard() {
           <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students[selectedStudent]}>
           <DialogTitle>Add Student</DialogTitle>
           <DialogContent>
-            <form className={classes.addStudent} noValidate autoComplete="off">
-              <TextField autoFocus required id="first-name" label="First name" inputRef={firstRef}/>
-              <TextField required id="last-name" label="Last name" inputRef={lastRef}/>
-              <TextField required id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange} helperText="Please select your teacher">
+            <form className={classes.addStudent} autoComplete="off">
+              <TextField autoFocus id="first-name" label="First name" error={validFirst.length>0} helperText={validFirst} inputRef={firstRef} onChange={handleValidation}/>
+              <TextField id="last-name" label="Last name" inputRef={lastRef} onChange={handleValidation}/>
+              <TextField id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange}>
                 {teachers.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                  <MenuItem key={option.name} value={option.name}>
+                    {option.name}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField required id="class" label="Classes" select value={selectedClass} onChange={handleClassChange} helperText="Please select your class">
+              <TextField id="class" label="Day" style={{ width: '91px' }} select value={selectedClass} onChange={handleClassChange}>
                 {teacherClasses.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option}
+                    {option.toUpperCase()}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField required id="times" label="Times" select value={selectedTime} onChange={handleTimeChange} helperText="Please select your time">
+              <TextField id="times" label="Time" style={{ width: '91px' }} select value={selectedTime} onChange={handleTimeChange}>
                 {classTimes.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}

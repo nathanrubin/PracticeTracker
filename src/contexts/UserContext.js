@@ -18,6 +18,8 @@ export function UserProvider({ children }) {
   const [assignments, setAssignments] = useState([])
   const [loadingStudents, setLoadingStudents] = useState(true)
   const [loadingClasses, setLoadingClasses] = useState(false)
+  const [loadingTeachers, setLoadingTeachers] = useState(true)
+  const [teachers, setTeachers] = useState([])
 
   useEffect(() => {
     if (!currentUser) {
@@ -90,6 +92,36 @@ export function UserProvider({ children }) {
         });
     return
   }
+
+  useEffect(() => {
+    if (!currentUser) {
+      return 
+    }
+
+    firestore.collection("teachers")
+    .get()
+    .then((querySnapshot) => {
+        const dbTeachers = []
+
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            const details = {
+              id: doc.id,
+              name: doc.data().name,
+              classes: doc.data().classes ? doc.data().classes : []
+            }
+            dbTeachers.push(details);
+        });
+        if (dbTeachers.length > 0){
+          setTeachers(dbTeachers)
+        }
+      }).catch((error) => {
+          console.log("Error getting document:", error);
+      }).finally(() => {
+        setLoadingTeachers(false)
+      });
+    }, [])
 
   function selectStudent(selected) {
     setSelectedStudent(selected)
@@ -198,7 +230,24 @@ export function UserProvider({ children }) {
    return students[selectedStudent]? students[selectedStudent].class.trim().split(" ")[1].toLowerCase() : "";
  }
 
+ function getTeacherClassDays(name) {
+   const days = teachers.filter(teacher => teacher.name == name)
+                        .map(t => t.classes.map(c => c.trim().split(" ")[0].toLowerCase())) // ["fri 4:00p", "mon 3:15p"] => ["fri", "mon"]
+                        .reduce((acc, curVal) => acc.concat(curVal), []);
+   console.log(days)
+   return days
+ }
+
+ function getClassTimes(name, day) {
+  const times = teachers.filter(teacher => teacher.name == name)
+                       .map(t => t.classes.filter(c => c.includes(day)).map(c => c.trim().split(" ")[1].toLowerCase())) // ["mon 4:00p", "mon 3:15p"] => ["3:15p", "4:00p"]
+                       .reduce((acc, curVal) => acc.concat(curVal), []);
+  console.log(times)
+  return times
+ }
+
   const value = {
+    teachers,
     students,
     selectedStudent,
     assignments,
@@ -209,12 +258,14 @@ export function UserProvider({ children }) {
     today,
     isDayInPast,
     getClassTime,
-    saveStudent
+    saveStudent,
+    getTeacherClassDays,
+    getClassTimes
   }
 
   return (
     <UserContext.Provider value={value}>
-      {!loadingStudents && !loadingClasses && children}
+      {!loadingStudents && !loadingClasses && !loadingTeachers && children}
     </UserContext.Provider>
   )
 }
