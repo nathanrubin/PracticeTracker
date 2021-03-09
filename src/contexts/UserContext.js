@@ -168,7 +168,7 @@ export function UserProvider({ children }) {
   }
 
   function saveStudent(first, last, teacher, classDay, time) {
-    const studentId = currentUser.email + "-" + first;
+    const studentId = currentUser.email + "-" + first.toLowerCase();
     var newStudent = {
         first: first,
         last: last,
@@ -179,8 +179,9 @@ export function UserProvider({ children }) {
         stickerPack: "",
         teacherStickers: [],
         weekdaysComplete: [],
-        myStickers: []
+        myStickers: ["","","","","","",""]
     }
+
     firestore.collection("students").doc(studentId).set(newStudent)
     .then(() => {
         console.log("Saved student");

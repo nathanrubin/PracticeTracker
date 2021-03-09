@@ -114,7 +114,7 @@ export default function Dashboard() {
   const [teacherClasses, setTeacherClasses] = React.useState([]);
   const [classTimes, setClassTimes] = React.useState([]);
   const [isEnabled, setIsEnabled] = React.useState(false);
-  const [validFirst, setValidFirst] = React.useState('');
+  const [firstError, setFirstError] = React.useState('');
   const firstRef = useRef()
   const lastRef = useRef()
 
@@ -154,22 +154,24 @@ export default function Dashboard() {
   const handleTeacherChange = (event) => {
     setSelectedTeacher(event.target.value);
     setTeacherClasses(getTeacherClassDays(event.target.value))
-    handleValidation()
+    setSelectedClass('')
+    setSelectedTime('')
+    setIsEnabled(false)
   };
   const handleClassChange = (event) => {
     setSelectedClass(event.target.value);
     setClassTimes(getClassTimes(selectedTeacher, event.target.value))
-    handleValidation()
+    setSelectedTime('')
+    setIsEnabled(false)
   };
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
-    handleValidation()
+    setIsEnabled(!firstError && firstRef.current.value && lastRef.current.value)
   };
   const handleValidation = () => {
-    const isValid = firstRef.current.value && lastRef.current.value && selectedTeacher && selectedClass && selectedTime
-    const isValidFirst = students.filter(s => s.first === firstRef.current.value).length == 0
-    setIsEnabled(isValid && isValidFirst);
-    setValidFirst(isValidFirst ? "" : "First name must be unique.");
+    const isValidFirst = !students.length || students.filter(s => s.first === firstRef.current.value).length == 0
+    setIsEnabled(isValidFirst && firstRef.current.value && lastRef.current.value && selectedTeacher && selectedClass && selectedTime);
+    setFirstError(isValidFirst ? "" : "First name must be unique.");
   };
 
   return (
@@ -237,11 +239,11 @@ export default function Dashboard() {
           <Weekly />
         </Container>
 
-          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students[selectedStudent]}>
+          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students.length}>
           <DialogTitle>Add Student</DialogTitle>
           <DialogContent>
             <form className={classes.addStudent} autoComplete="off">
-              <TextField autoFocus id="first-name" label="First name" error={validFirst.length>0} helperText={validFirst} inputRef={firstRef} onChange={handleValidation}/>
+              <TextField autoFocus id="first-name" label="First name" error={firstError.length>0} helperText={firstError} inputRef={firstRef} onChange={handleValidation}/>
               <TextField id="last-name" label="Last name" inputRef={lastRef} onChange={handleValidation}/>
               <TextField id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange}>
                 {teachers.map((option) => (

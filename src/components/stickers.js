@@ -4,7 +4,7 @@ export function getImgByTitle(title) {
 
 const defaultPack = 'Music1';
 export function getStickers(datePack) {
-  const pack = datePack.includes('/') ? datePack.split('/')[1] : datePack
+  const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
   const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : defaultPack));
   return  myStickers.length ? myStickers : stickers.filter(s => s.title.includes(defaultPack));
 }

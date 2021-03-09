@@ -279,7 +279,7 @@ export default function Weekly() {
           <DialogContentText onClose={handleClose}>
             Pick a sticker:
           </DialogContentText>
-            {getStickers(students[selectedStudent].stickerPack).map((tile) => (
+            {getStickers(students.length && students[selectedStudent].stickerPack).map((tile) => (
                 <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img}>
                     <Avatar src={tile.img} />
                 </IconButton>
