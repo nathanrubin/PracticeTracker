@@ -24,7 +24,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import Chip from '@material-ui/core/Chip';
-import {stickers, getImgByTitle} from '../stickers';
+import {getStickers, getImgByTitle} from '../stickers';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
   cell: {
     width: '6rem',
     padding: theme.spacing(2, 0, 1, 0)
+  },
+  row: {
+    height: 70
   },
   headerAssignments: {
     padding: 0
@@ -219,7 +222,7 @@ export default function Weekly() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
+              <TableRow className={classes.row}>
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <TableCell key={day} align='center' className={classes.cell}>
                     {renderSticker(day)}
@@ -276,7 +279,7 @@ export default function Weekly() {
           <DialogContentText onClose={handleClose}>
             Pick a sticker:
           </DialogContentText>
-            {stickers.map((tile) => (
+            {getStickers(students[selectedStudent].stickerPack).map((tile) => (
                 <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img}>
                     <Avatar src={tile.img} />
                 </IconButton>

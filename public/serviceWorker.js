@@ -4,10 +4,11 @@ importScripts(
 
 workbox.precaching.precacheAndRoute([])
 
-workbox.routing.registerRoute(/\.*$/, new workbox.strategies.NetworkFirst())
-workbox.routing.registerRoute(/\.(?:png|jpg|jpeg|svg|gif)$/,
+workbox.routing.registerRoute(
+  // Custom `matchCallback` function
+  ({event}) => event.request.destination === 'image',
   new workbox.strategies.CacheFirst({
-    cacheName: 'image-cache',
+    cacheName: 'image',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 40,
@@ -16,3 +17,5 @@ workbox.routing.registerRoute(/\.(?:png|jpg|jpeg|svg|gif)$/,
     ]
   })
 )
+workbox.routing.registerRoute(/\.*$/, new workbox.strategies.NetworkFirst())
+
