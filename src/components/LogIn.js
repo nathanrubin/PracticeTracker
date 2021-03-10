@@ -62,8 +62,8 @@ export default function LogIn() {
         setVerify("Please verify your email.")
       }
 
-    } catch {
-      setError("Failed to log in. ")
+    } catch(er) {
+      setError("Failed to log in.2 " + er)
       setLoading(false)
     } 
   }
