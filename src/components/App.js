@@ -31,6 +31,7 @@ function App() {
       <Route path="/signup" component={SignUp} />
       <Route path="/login" component={LogIn} />
       <Route path="/forgot-password" component={ForgotPassword} />
+      <Redirect from="/**" to="/" />
     </Switch>
   );
 

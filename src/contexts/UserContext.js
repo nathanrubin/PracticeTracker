@@ -167,6 +167,16 @@ export function UserProvider({ children }) {
      });
   }
 
+  function saveStickerPack(pack) {
+    const studentId = students[selectedStudent].id;
+    students[selectedStudent].stickerPack = moment().format("YYYY MM DD") + "/" + pack;
+    students[selectedStudent].myStickers = emptyStickers
+    firestore.collection("students").doc(studentId).update( {
+        stickerPack: students[selectedStudent].stickerPack,
+        myStickers: students[selectedStudent].myStickers
+    });
+  }
+
   function saveStudent(first, last, teacher, classDay, time) {
     const studentId = currentUser.email + "-" + first.toLowerCase();
     var newStudent = {
@@ -247,6 +257,23 @@ export function UserProvider({ children }) {
   return times
  }
 
+ function getPreClassDate() {
+  const classDayStr = students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
+  return moment().day(classDayStr).day(-2)
+ }
+
+ function isNewWeek() {
+  // if stickerPackDate is less than or equal to preClassDate, then prompt to change. stickerPack=2020 01 01/Music1
+  if (students.length && students[selectedStudent].stickerPack.includes("/")) {
+    const stickerDate = moment(students[selectedStudent].stickerPack.split("/")[0], 'YYYY MM DD');
+    const preClassDate = getPreClassDate();
+    console.log("stickerDate: " + stickerDate.format('MM DD') + " preClassDate: " + preClassDate.format('MM DD'));
+    return stickerDate <= preClassDate;
+  }
+
+   return false
+ }
+
   const value = {
     teachers,
     students,
@@ -255,13 +282,15 @@ export function UserProvider({ children }) {
     selectStudent,
     addSticker,
     removeSticker,
+    saveStickerPack,
     isClassDay,
     today,
     isDayInPast,
     getClassTime,
     saveStudent,
     getTeacherClassDays,
-    getClassTimes
+    getClassTimes,
+    isNewWeek
   }
 
   return (

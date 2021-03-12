@@ -11,11 +11,11 @@ workbox.routing.registerRoute(
     cacheName: 'image',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 40,
+        maxEntries: 100,
         maxAgeSeconds: 7 * 24 * 60 * 60
       })
     ]
   })
 )
-workbox.routing.registerRoute(/\.*$/, new workbox.strategies.NetworkFirst())
+//workbox.routing.registerRoute(/\.*$/, new workbox.strategies.NetworkFirst())
 

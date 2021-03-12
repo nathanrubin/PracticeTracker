@@ -8,7 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import StarIcon from '@material-ui/icons/Star';
 import ClearIcon from '@material-ui/icons/Clear';
-import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import Avatar from '@material-ui/core/Avatar';
 import moment from 'moment';
 import List from '@material-ui/core/List';
@@ -21,16 +20,21 @@ import { wagner } from '../../theme';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
+
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import Chip from '@material-ui/core/Chip';
-import {getStickers, getImgByTitle} from '../stickers';
+import {getStickers, getImgByTitle, availablePacks} from '../stickers';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { DialogTitle } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   },
   rootAssignments: {
     backgroundColor: theme.palette.background.paper
+  },
+  floatRight: {
+    float: 'right'
   },
   table: {
     padding: theme.spacing(2, 0)
@@ -83,10 +90,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  stickerPackSelect: {
+    display: 'flex',
+  },
+  gridList: {
+    width: 350,
+  },
   avatarSticker: {
     width: 40,
     height: 40
-  }
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 300,
+  },
+  packDialog: {
+    padding: theme.spacing(0, 2)
+  },
 }));
 
 const StyledBadge = withStyles((theme) => ({
@@ -113,7 +133,7 @@ const StyledAvatarBadge = withStyles((theme) => ({
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime } = useUser()
+  const { students, selectedStudent, assignments, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime, isNewWeek, saveStickerPack } = useUser()
   const student = students[selectedStudent]? students[selectedStudent] : {first: "student"};
 
   const [checked, setChecked] = React.useState(setInitialChecked());
@@ -207,6 +227,21 @@ export default function Weekly() {
     setOpen(false);
   }
 
+  const [selectedPack, setSelectedPack] = React.useState(getPreviousPack());
+  const [openPack, setOpenPack] = React.useState(true)
+  const handleStickerPackChange = (event) => {
+    setSelectedPack(event.target.value);
+  };
+  const handleSavePack = () => {
+    saveStickerPack(selectedPack);
+    setOpenPack(false);
+  }
+
+  function getPreviousPack() {
+    const datePack = students.length ? students[selectedStudent].stickerPack : "";
+    return datePack.includes('/') ? datePack.split('/')[1] : datePack;
+  }
+
   return (
     <Grid container spacing={1}>
 
@@ -290,6 +325,30 @@ export default function Weekly() {
             Remove
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog aria-labelledby="sticker-pack-diaglog" open={students.length && isNewWeek() && openPack}>
+        <DialogTitle>Select new sticker pack:<Button onClick={() => handleSavePack()} color="primary" className={classes.floatRight}>Save</Button></DialogTitle>
+        <DialogContent className={classes.packDialog}>
+          <FormControl className={classes.formControl}>
+            <Select
+              id="sticker-pack-open-select"
+              value={selectedPack}
+              autoWidth={true}
+              onChange={handleStickerPackChange}
+            >
+            {availablePacks.map((pack) => (
+              <MenuItem value={pack} key={pack}>
+                <div className={classes.stickerPackSelect}>
+                  {getStickers(pack).map((tile) => (
+                      <Avatar key={tile.title} src={tile.img} />          
+                  ))}
+                </div>
+              </MenuItem>
+            ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
       </Dialog>
 
     </Grid>

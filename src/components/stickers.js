@@ -2,11 +2,11 @@ export function getImgByTitle(title) {
   return stickers.filter((sticker) => sticker.title === title).map(sticker => sticker.img)[0]
 }
 
-const defaultPack = 'Music1';
+export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2'];
 export function getStickers(datePack) {
   const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
-  const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : defaultPack));
-  return  myStickers.length ? myStickers : stickers.filter(s => s.title.includes(defaultPack));
+  const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : availablePacks[0]));
+  return  myStickers.length ? myStickers : stickers.filter(s => s.title.includes(availablePacks[0]));
 }
 
 export const stickers = [
