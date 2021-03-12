@@ -239,7 +239,7 @@ export default function Weekly() {
 
   function getPreviousPack() {
     const datePack = students.length ? students[selectedStudent].stickerPack : "";
-    return datePack.includes('/') ? datePack.split('/')[1] : datePack;
+    return datePack.length ? (datePack.includes('/') ? datePack.split('/')[1] : datePack) : "Music1";
   }
 
   return (

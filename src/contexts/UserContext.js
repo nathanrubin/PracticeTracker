@@ -271,7 +271,7 @@ export function UserProvider({ children }) {
     return stickerDate <= preClassDate;
   }
 
-   return false
+   return true
  }
 
   const value = {
