@@ -102,11 +102,19 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 300,
   },
   packDialog: {
+    padding: theme.spacing(0, 1)
+  },
+  packDialogContent: {
     padding: theme.spacing(0, 2)
   },
+  packAvatar: {
+    width: '14%',
+    height: '14%',
+    maxWidth: 40,
+    maxHeight: 40
+  }
 }));
 
 const StyledBadge = withStyles((theme) => ({
@@ -133,7 +141,7 @@ const StyledAvatarBadge = withStyles((theme) => ({
 
 export default function Weekly() {
   const classes = useStyles();
-  const { students, selectedStudent, assignments, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime, isNewWeek, saveStickerPack } = useUser()
+  const { students, selectedStudent, assignments, addSticker, removeSticker, isDayInPast, isClassDay, today, getClassTime, saveStickerPack } = useUser()
   const student = students[selectedStudent]? students[selectedStudent] : {first: "student"};
 
   const [checked, setChecked] = React.useState(setInitialChecked());
@@ -228,13 +236,20 @@ export default function Weekly() {
   }
 
   const [selectedPack, setSelectedPack] = React.useState(getPreviousPack());
-  const [openPack, setOpenPack] = React.useState(true)
+  const [openPack, setOpenPack] = React.useState(false);
   const handleStickerPackChange = (event) => {
     setSelectedPack(event.target.value);
   };
   const handleSavePack = () => {
     saveStickerPack(selectedPack);
-    setOpenPack(false);
+    setOpenPack(false)
+  }
+  const handleOpenPack = () => {
+    if (students.length && students[selectedStudent].isNewWeek) {
+      setOpenPack(true)
+      return true
+    }
+    return false
   }
 
   function getPreviousPack() {
@@ -327,9 +342,9 @@ export default function Weekly() {
         </DialogActions>
       </Dialog>
 
-      <Dialog aria-labelledby="sticker-pack-diaglog" open={students.length && isNewWeek() && openPack}>
-        <DialogTitle>Select new sticker pack:<Button onClick={() => handleSavePack()} color="primary" className={classes.floatRight}>Save</Button></DialogTitle>
-        <DialogContent className={classes.packDialog}>
+      <Dialog aria-labelledby="sticker-pack-diaglog" open={openPack || handleOpenPack()} className={classes.packDialog} maxWidth={'xs'}>
+        <DialogTitle>Pick new stickers:<Button onClick={() => handleSavePack()} color="primary" className={classes.floatRight}>Save</Button></DialogTitle>
+        <DialogContent className={classes.packDialogContent}>
           <FormControl className={classes.formControl}>
             <Select
               id="sticker-pack-open-select"
@@ -341,7 +356,7 @@ export default function Weekly() {
               <MenuItem value={pack} key={pack}>
                 <div className={classes.stickerPackSelect}>
                   {getStickers(pack).map((tile) => (
-                      <Avatar key={tile.title} src={tile.img} />          
+                      <Avatar key={tile.title} src={tile.img} className={classes.packAvatar} />          
                   ))}
                 </div>
               </MenuItem>

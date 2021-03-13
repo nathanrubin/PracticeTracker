@@ -45,13 +45,15 @@ export function UserProvider({ children }) {
               teacher: doc.data().teacher,
               teacherStickers: doc.data().teacherStickers,
               weekdaysComplete: doc.data().weekdaysComplete,
-              myStickers: doc.data().myStickers ? doc.data().myStickers : []
+              myStickers: doc.data().myStickers ? doc.data().myStickers : [],
+              isNewWeek: false
             }
             emptyStickers.forEach((empty, id) => {
               if(details.myStickers[id] === undefined) {
                 details.myStickers[id] = empty 
               }
             });
+            details.isNewWeek = isNewWeek(details)
             dbStudents.push(details);
             loadClass(details.teacher, details.class);
             setLoadingClasses(true);
@@ -170,7 +172,8 @@ export function UserProvider({ children }) {
   function saveStickerPack(pack) {
     const studentId = students[selectedStudent].id;
     students[selectedStudent].stickerPack = moment().format("YYYY MM DD") + "/" + pack;
-    students[selectedStudent].myStickers = emptyStickers
+    students[selectedStudent].myStickers = emptyStickers;
+    students[selectedStudent].isNewWeek = false;
     firestore.collection("students").doc(studentId).update( {
         stickerPack: students[selectedStudent].stickerPack,
         myStickers: students[selectedStudent].myStickers
@@ -257,16 +260,16 @@ export function UserProvider({ children }) {
   return times
  }
 
- function getPreClassDate() {
-  const classDayStr = students[selectedStudent].class.trim().split(" ")[0].toLowerCase()
+ function getPreClassDate(student) {
+  const classDayStr = student.class.trim().split(" ")[0].toLowerCase()
   return moment().day(classDayStr).day(-2)
  }
 
- function isNewWeek() {
+ function isNewWeek(student) {
   // if stickerPackDate is less than or equal to preClassDate, then prompt to change. stickerPack=2020 01 01/Music1
-  if (students.length && students[selectedStudent].stickerPack.includes("/")) {
-    const stickerDate = moment(students[selectedStudent].stickerPack.split("/")[0], 'YYYY MM DD');
-    const preClassDate = getPreClassDate();
+  if (student && student.stickerPack.includes("/")) {
+    const stickerDate = moment(student.stickerPack.split("/")[0], 'YYYY MM DD');
+    const preClassDate = getPreClassDate(student);
     console.log("stickerDate: " + stickerDate.format('MM DD') + " preClassDate: " + preClassDate.format('MM DD'));
     return stickerDate <= preClassDate;
   }
@@ -289,8 +292,7 @@ export function UserProvider({ children }) {
     getClassTime,
     saveStudent,
     getTeacherClassDays,
-    getClassTimes,
-    isNewWeek
+    getClassTimes
   }
 
   return (
