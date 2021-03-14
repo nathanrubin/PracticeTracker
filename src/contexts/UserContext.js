@@ -199,10 +199,9 @@ export function UserProvider({ children }) {
     .then(() => {
         console.log("Saved student");
         newStudent.id = studentId;
+        newStudent.isNewWeek = true;
         students.push(newStudent)
-        if (!selectedStudent) {
-          setSelectedStudent(0)
-        }
+        setSelectedStudent(students.length-1)
         loadClass(newStudent.teacher, newStudent.class);
     })
     .catch((error) => {

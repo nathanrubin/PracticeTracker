@@ -62,6 +62,12 @@ export function SideBar ({student}) {
         <Grid item xs={12}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Achievements: </Typography>
         </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>Version:</Typography>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography className={classes.title} color="secondary" gutterBottom>0.9.1.1</Typography>
+        </Grid>
       </Grid>
 
       <Divider />

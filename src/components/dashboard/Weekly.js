@@ -293,8 +293,8 @@ export default function Weekly() {
                 <AssignmentIcon />
               </Avatar>
             }
-            title={<div>{student.first}'s Assignments</div>}
-            subheader={<div style={{ color: wagner.coral }} >{moment().format("dddd, MMMM DD")}</div>}
+            title={<div><b>{student.first}'s Assignments</b></div>}
+            subheader={<div style={{ color: wagner.coral }} ><b>{moment().format("dddd, MMMM DD")}</b></div>}
           />
             <List className={classes.root} dense={true} disablePadding={true}>
             <Grid container spacing={0}>
