@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
   headerAssignments: {
     padding: 0
   },
+  assignmentTitle: {
+    textTransform: 'uppercase',
+    fontWeight: 500
+  },
   list: {
     paddingLeft: 10,
     paddingRight: 10
@@ -293,8 +297,8 @@ export default function Weekly() {
                 <AssignmentIcon />
               </Avatar>
             }
-            title={<div><b>{student.first}'s Assignments</b></div>}
-            subheader={<div style={{ color: wagner.coral }} ><b>{moment().format("dddd, MMMM DD")}</b></div>}
+            title={<div className={classes.assignmentTitle}>{student.first}'s Assignments</div>}
+            subheader={<div className={classes.assignmentTitle} style={{ color: wagner.coral }} >{moment().format("dddd, MMMM DD")}</div>}
           />
             <List className={classes.root} dense={true} disablePadding={true}>
             <Grid container spacing={0}>
