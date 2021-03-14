@@ -239,6 +239,9 @@ export function UserProvider({ children }) {
  function today() {
     return moment().isoWeekday() % 7
  }
+ function classDay(student) {
+   return moment().day(student.class.trim().split(" ")[0].toLowerCase()).isoWeekday() % 7;
+ }
 
  function getClassTime() {
    return students[selectedStudent]? students[selectedStudent].class.trim().split(" ")[1].toLowerCase() : "";
@@ -261,8 +264,12 @@ export function UserProvider({ children }) {
  }
 
  function getPreClassDate(student) {
-  const classDayStr = student.class.trim().split(" ")[0].toLowerCase()
-  return moment().day(classDayStr).day(-2)
+  const weekdayClass = classDay(student)
+  const weekdayToday = today();
+  const between = moment().weekday(weekdayClass).diff(moment().weekday(weekdayToday), 'days');
+  console.log("between: " + between + " between-7: " + (between-7));
+  console.log("pre class date: " + moment().weekday(between - 7).format('MM DD'));
+  return moment().weekday(between - 7);
  }
 
  function isNewWeek(student) {
