@@ -2,7 +2,7 @@ export function getImgByTitle(title) {
   return stickers.filter((sticker) => sticker.title === title).map(sticker => sticker.img)[0]
 }
 
-export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space1'];
+export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space1', 'Cat2', 'Dog2'];
 export function getStickers(datePack) {
   const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
   const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : availablePacks[0]));
@@ -49,4 +49,20 @@ export const stickers = [
     {img: require("/stickers/Space1/Space1-Rocket.png"), title: 'Space1-Rocket',},
     {img: require("/stickers/Space1/Space1-Shootingstar.png"), title: 'Space1-Shootingstar',},
     {img: require("/stickers/Space1/Space1-UFO.png"), title: 'Space1-UFO',},
+
+    {img: require("/stickers/Cat2/Cat2-2.png"), title: 'Cat2-2',},
+    {img: require("/stickers/Cat2/Cat2-3.png"), title: 'Cat2-3',},
+    {img: require("/stickers/Cat2/Cat2-4.png"), title: 'Cat2-4',},
+    {img: require("/stickers/Cat2/Cat2-5.png"), title: 'Cat2-5',},
+    {img: require("/stickers/Cat2/Cat2-6.png"), title: 'Cat2-6',},
+    {img: require("/stickers/Cat2/Cat2-7.png"), title: 'Cat2-7',},
+    {img: require("/stickers/Cat2/Cat2-9.png"), title: 'Cat2-9',},
+
+    {img: require("/stickers/Dog2/Dog2-dog8.png"), title: 'Dog2-dog8',},
+    {img: require("/stickers/Dog2/Dog2-dog9.png"), title: 'Dog2-dog9',},
+    {img: require("/stickers/Dog2/Dog2-dog10.png"), title: 'Dog2-dog10',},
+    {img: require("/stickers/Dog2/Dog2-dog11.png"), title: 'Dog2-dog11',},
+    {img: require("/stickers/Dog2/Dog2-dog12.png"), title: 'Dog2-dog12',},
+    {img: require("/stickers/Dog2/Dog2-dog13.png"), title: 'Dog2-dog13',},
+    {img: require("/stickers/Dog2/Dog2-dog14.png"), title: 'Dog2-dog14',},
 ];

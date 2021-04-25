@@ -67,7 +67,7 @@ export function SideBar ({student}) {
           <Typography className={classes.title} color="textSecondary" gutterBottom>Version:</Typography>
         </Grid>
         <Grid item xs={8}>
-          <Typography className={classes.title} color="secondary" gutterBottom>0.9.1.1</Typography>
+          <Typography className={classes.title} color="secondary" gutterBottom>0.9.1.2</Typography>
         </Grid>
       </Grid>
 

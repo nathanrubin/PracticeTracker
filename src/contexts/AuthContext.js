@@ -4,6 +4,7 @@ import { auth, firestore } from "../firebase"
 const AuthContext = React.createContext()
 
 export function useAuth() {
+  console.log("useAuth")
   return useContext(AuthContext)
 }
 
@@ -50,19 +51,26 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      let email = user != null ? user.email : "";
-      firestore.collection("accounts").where('emails', 'array-contains', email).limit(1)
-        .get()
-        .then((querySnapshot) => {
-          if(!querySnapshot.empty) {
-            console.log("setting current user")
-            setCurrentUser(user)
-            setRegistered(true)
-          } else {
-            setRegistered(false)
-          }
-          setLoading(false)
-        })        
+
+      if (user) {
+        setLoading(true)
+        firestore.collection("accounts").where('emails', 'array-contains', user.email).limit(1)
+          .get()
+          .then((querySnapshot) => {
+            if(!querySnapshot.empty) {
+              console.log("setting current user")
+              setCurrentUser(user)
+              setRegistered(true)
+            } else {
+              setRegistered(false)
+            }
+            setLoading(false)
+          }) 
+      } else {
+        setCurrentUser(null)
+        setRegistered(false)
+        setLoading(false)
+      } 
     })
 
     return unsubscribe
