@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LogIn() {
   const classes = useStyles();
-  
   const emailRef = useRef()
   const passwordRef = useRef()
   const { currentUser, login } = useAuth()
@@ -63,7 +62,7 @@ export default function LogIn() {
       }
 
     } catch(er) {
-      setError("Failed to log in.2 " + er)
+      setError("" + er)
       setLoading(false)
     } 
   }

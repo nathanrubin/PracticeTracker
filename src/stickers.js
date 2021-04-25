@@ -2,7 +2,7 @@ export function getImgByTitle(title) {
   return stickers.filter((sticker) => sticker.title === title).map(sticker => sticker.img)[0]
 }
 
-export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2'];
+export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space1'];
 export function getStickers(datePack) {
   const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
   const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : availablePacks[0]));
@@ -41,4 +41,12 @@ export const stickers = [
     {img: require("/stickers/Music2/Music2-Trumpet.png"), title: 'Music2-Trumpet',},
     {img: require("/stickers/Music2/Music2-Violin.png"), title: 'Music2-Violin',},
     {img: require("/stickers/Music2/Music2-Xyla.png"), title: 'Music2-Xyla',},
+
+    {img: require("/stickers/Space1/Space1-Astronaut.png"), title: 'Space1-Astronaut',},
+    {img: require("/stickers/Space1/Space1-Jar.png"), title: 'Space1-Jar',},
+    {img: require("/stickers/Space1/Space1-Moon.png"), title: 'Space1-Moon',},
+    {img: require("/stickers/Space1/Space1-Planet.png"), title: 'Space1-Planet',},
+    {img: require("/stickers/Space1/Space1-Rocket.png"), title: 'Space1-Rocket',},
+    {img: require("/stickers/Space1/Space1-Shootingstar.png"), title: 'Space1-Shootingstar',},
+    {img: require("/stickers/Space1/Space1-UFO.png"), title: 'Space1-UFO',},
 ];

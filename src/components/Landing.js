@@ -1,10 +1,12 @@
-import React from "react"
+import React, { useState } from "react"
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import wagnerLogo from "/icons/icon-512x512.png";
 import { Link } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,8 +34,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function ContactUs() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Email address is not recognized. Please contact us for further assistance. '}
+      <a href={'https://www.wagnersmusic.com/'}>info@wagnersmusic.com</a>{' '}
+      {'.'}
+    </Typography>
+  );
+}
+
 export default function SignIn() {
   const classes = useStyles();
+  const { currentUser, registered } = useAuth()
+  const [error, setError] = useState(!currentUser || registered ? "" : ContactUs())
+
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
@@ -41,6 +56,7 @@ export default function SignIn() {
         <Typography variant="body2" color="textSecondary" className={classes.welcome} align="center">
           Log in to continue
         </Typography>
+        {error && <Alert severity="error" className={classes.alert}>{error}</Alert>}
           <Button
             type="submit"
             fullWidth

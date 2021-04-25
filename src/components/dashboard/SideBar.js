@@ -1,7 +1,7 @@
 import React from 'react';
-import { useHistory } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from "react-router-dom";
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -28,14 +28,15 @@ const useStyles = makeStyles((theme) => ({
 
 export function SideBar ({student}) {
   const classes = useStyles();
+  let history = useHistory();
 
   const { logout } = useAuth()
-  const history = useHistory()
 
   async function handleLogout() {
     try {
       await logout()
-      history.push("/")
+      console.log("logout history push.")
+      history.go("/")
     } catch {
       console.log("failed to log out")
     }

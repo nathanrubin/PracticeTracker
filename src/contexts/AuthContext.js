@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react"
-import { auth } from "../firebase"
+import { auth, firestore } from "../firebase"
 
 const AuthContext = React.createContext()
 
@@ -9,6 +9,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
+  const [registered, setRegistered] = useState(true)
   const [loading, setLoading] = useState(true)
 
   function signup(email, password) {
@@ -49,8 +50,19 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      setLoading(false)
-      setCurrentUser(user)
+      let email = user != null ? user.email : "";
+      firestore.collection("accounts").where('emails', 'array-contains', email).limit(1)
+        .get()
+        .then((querySnapshot) => {
+          if(!querySnapshot.empty) {
+            console.log("setting current user")
+            setCurrentUser(user)
+            setRegistered(true)
+          } else {
+            setRegistered(false)
+          }
+          setLoading(false)
+        })        
     })
 
     return unsubscribe
@@ -58,6 +70,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    registered,
     login,
     signup,
     logout,

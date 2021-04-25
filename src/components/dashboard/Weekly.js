@@ -24,7 +24,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import Chip from '@material-ui/core/Chip';
-import {getStickers, getImgByTitle, availablePacks} from '../stickers';
+import {getStickers, getImgByTitle, availablePacks} from '../../stickers';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';

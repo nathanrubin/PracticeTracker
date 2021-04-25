@@ -123,7 +123,7 @@ export function UserProvider({ children }) {
       }).finally(() => {
         setLoadingTeachers(false)
       });
-    }, [])
+  }, [])
 
   function selectStudent(selected) {
     setSelectedStudent(selected)
