@@ -13,6 +13,9 @@ import Divider from '@material-ui/core/Divider'
 import { wagner } from '../../theme'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
+import Avatar from '@material-ui/core/Avatar';
+
+import {getStickers} from '../../stickers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +26,17 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     padding: theme.spacing(1)
+  },
+  packAvatar: {
+    width: '15%',
+    height: '15%',
+    maxWidth: 40,
+    maxHeight: 40
+  },
+  stickerPack: {
+    display: 'flex',
+    marginLeft: '-5px',
+    marginRight: '5px'
   },
 }));
 
@@ -57,12 +71,26 @@ export function SideBar ({student}) {
         <Grid item xs={8}>
           <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">Play Along Songs</a>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Stickers: </Typography>
+        </Grid>
+        <Grid item xs={9}>
+          <div className={classes.stickerPack}>
+              {getStickers(student? student.stickerPack : "Music1").map((tile) => (
+                  <Avatar key={tile.title} src={tile.img} className={classes.packAvatar} />          
+              ))}
+          </div>
         </Grid>
         <Grid item xs={12}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Achievements: </Typography>
         </Grid>
+        {/* <Grid item xs={12}>
+        <div className={classes.stickerPack}>
+              {getStickers(student? student.stickerPack : "Music1").map((tile) => (
+                  <Avatar key={tile.title} src={tile.img} className={classes.packAvatar} />          
+              ))}
+          </div>
+        </Grid> */}
         <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Version:</Typography>
         </Grid>
