@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "practice-tracker",
-    "practice-tracker": "practice-tracker-e1838"
+    "default": "prod",
+    "prod": "wagners-music"
   }
 }
