@@ -250,15 +250,16 @@ export function UserProvider({ children }) {
    const days = teachers.filter(teacher => teacher.name == name)
                         .map(t => t.classes.map(c => c.trim().split(" ")[0].toLowerCase())) // ["fri 4:00p", "mon 3:15p"] => ["fri", "mon"]
                         .reduce((acc, curVal) => acc.concat(curVal), []);
-   console.log(days)
-   return days
+   var uniqueDays = Array.from(new Set(days));
+   let sorted = uniqueDays.sort((a, b) => moment(a, 'ddd').weekday() - moment(b, 'ddd').weekday() );
+   return sorted
  }
 
  function getClassTimes(name, day) {
-  const times = teachers.filter(teacher => teacher.name == name)
+  var times = teachers.filter(teacher => teacher.name == name)
                        .map(t => t.classes.filter(c => c.includes(day)).map(c => c.trim().split(" ")[1].toLowerCase())) // ["mon 4:00p", "mon 3:15p"] => ["3:15p", "4:00p"]
                        .reduce((acc, curVal) => acc.concat(curVal), []);
-  console.log(times)
+  times.sort((a, b) => moment(a,'h:mma') - moment(b,'h:mma'));
   return times
  }
 
