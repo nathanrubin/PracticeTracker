@@ -34,7 +34,7 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { DialogTitle } from '@material-ui/core';
+import { DialogTitle, useTheme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,6 +96,8 @@ const useStyles = makeStyles((theme) => ({
   },
   stickerPackSelect: {
     display: 'flex',
+    paddingLeft: '16px',
+    paddingRight: '16px'
   },
   gridList: {
     width: 350,
@@ -108,7 +110,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   packDialog: {
-    padding: theme.spacing(0, 1)
+    padding: theme.spacing(0, 1),
+    [theme.breakpoints.down(480)]: {
+      margin: -32,
+    },
   },
   packDialogContent: {
     padding: theme.spacing(0, 2)
@@ -258,7 +263,8 @@ export default function Weekly() {
 
   function getPreviousPack() {
     const datePack = students.length ? students[selectedStudent].stickerPack : "";
-    return datePack.length ? (datePack.includes('/') ? datePack.split('/')[1] : datePack) : "Music1";
+    const pack = datePack.length ? (datePack.includes('/') ? datePack.split('/')[1] : datePack) : "Music1";
+    return availablePacks.includes(pack)? pack : 'Music1';
   }
 
   return (
@@ -346,7 +352,7 @@ export default function Weekly() {
         </DialogActions>
       </Dialog>
 
-      <Dialog aria-labelledby="sticker-pack-diaglog" open={openPack || handleOpenPack()} className={classes.packDialog} maxWidth={'xs'}>
+      <Dialog aria-labelledby="sticker-pack-diaglog" open={openPack || handleOpenPack()} className={classes.packDialog}>
         <DialogTitle>Pick new stickers:<Button onClick={() => handleSavePack()} color="primary" className={classes.floatRight}>Save</Button></DialogTitle>
         <DialogContent className={classes.packDialogContent}>
           <FormControl className={classes.formControl}>
@@ -357,7 +363,7 @@ export default function Weekly() {
               onChange={handleStickerPackChange}
             >
             {availablePacks.map((pack) => (
-              <MenuItem value={pack} key={pack}>
+              <MenuItem value={pack} key={pack} style={{paddingLeft: 0, paddingRight: 0}} >
                 <div className={classes.stickerPackSelect}>
                   {getStickers(pack).map((tile) => (
                       <Avatar key={tile.title} src={tile.img} className={classes.packAvatar} />          
