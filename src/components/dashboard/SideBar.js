@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 14,
   },
   content: {
-    fontSize: 12,
+    fontSize: 11,
   },
   container: {
     padding: theme.spacing(1)
@@ -52,6 +52,10 @@ const useStyles = makeStyles((theme) => ({
   awardAvatar: {
     maxWidth: 40,
     maxHeight: 40
+  },
+  award: {
+    width: 40,
+    textAlign: 'center'
   }
 }));
 
@@ -79,8 +83,10 @@ export function SideBar ({student}) {
           <GridList cellHeight={'auto'} className={classes.gridList} cols={4}>
             {student.teacherStickers.map((s) => (
               <GridListTile key={s.split('/')[1]}>
-                <Avatar key={s.split('/')[1]} src={getImgByTitle(s.split('/')[1])} className={classes.awardAvatar} />
-                <Typography className={classes.content} color="primary" gutterBottom>{s.split('/')[0]}</Typography>
+                <div className={classes.award}>
+                  <Avatar key={s.split('/')[1]} src={getImgByTitle(s.split('/')[1])} className={classes.awardAvatar} />
+                  <Typography className={classes.content} color="primary" gutterBottom>{s.split('/')[0]}</Typography>
+                </div>
               </GridListTile>
             ))}
           </GridList>
@@ -97,14 +103,14 @@ export function SideBar ({student}) {
           <Typography className={classes.title} color="textSecondary" gutterBottom>Class: </Typography>
         </Grid>
         <Grid item xs={8}>
-          <Typography className={classes.content} color="secondary" gutterBottom>{student? student.teacher : ""} - {student? student.class: ""}</Typography>
+          <Typography className={classes.title} color="secondary" gutterBottom>{student? student.teacher : ""} - {student? student.class: ""}</Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Songs: </Typography>
         </Grid>
         <Grid item xs={8}>
           <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">
-          <Typography className={classes.content} color="secondary" gutterBottom>Play Along Songs</Typography></a>
+          <Typography className={classes.title} color="secondary" gutterBottom>Play Along Songs</Typography></a>
         </Grid>
         <Grid item xs={5}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Sticker Pack: </Typography>
