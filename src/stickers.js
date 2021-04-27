@@ -2,7 +2,7 @@ export function getImgByTitle(title) {
   return stickers.filter((sticker) => sticker.title === title).map(sticker => sticker.img)[0]
 }
 
-export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space1', 'Cat2', 'Dog2'];
+export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space2', 'Cat2', 'Dog2', 'Winter1'];
 export function getStickers(datePack) {
   const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
   const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : availablePacks[0]));
@@ -42,13 +42,13 @@ export const stickers = [
     {img: require("/stickers/Music2/Music2-Violin.png"), title: 'Music2-Violin',},
     {img: require("/stickers/Music2/Music2-Xyla.png"), title: 'Music2-Xyla',},
 
-    {img: require("/stickers/Space1/Space1-Astronaut.png"), title: 'Space1-Astronaut',},
-    {img: require("/stickers/Space1/Space1-Jar.png"), title: 'Space1-Jar',},
-    {img: require("/stickers/Space1/Space1-Moon.png"), title: 'Space1-Moon',},
-    {img: require("/stickers/Space1/Space1-Planet.png"), title: 'Space1-Planet',},
-    {img: require("/stickers/Space1/Space1-Rocket.png"), title: 'Space1-Rocket',},
-    {img: require("/stickers/Space1/Space1-Shootingstar.png"), title: 'Space1-Shootingstar',},
-    {img: require("/stickers/Space1/Space1-UFO.png"), title: 'Space1-UFO',},
+    {img: require("/stickers/Space2/Space2-Astronaut.png"), title: 'Space2-Astronaut',},
+    {img: require("/stickers/Space2/Space2-Jar.png"), title: 'Space2-Jar',},
+    {img: require("/stickers/Space2/Space2-Moon.png"), title: 'Space2-Moon',},
+    {img: require("/stickers/Space2/Space2-Planet.png"), title: 'Space2-Planet',},
+    {img: require("/stickers/Space2/Space2-Rocket.png"), title: 'Space2-Rocket',},
+    {img: require("/stickers/Space2/Space2-Shootingstar.png"), title: 'Space2-Shootingstar',},
+    {img: require("/stickers/Space2/Space2-UFO.png"), title: 'Space2-UFO',},
 
     {img: require("/stickers/Cat2/Cat2-2.png"), title: 'Cat2-2',},
     {img: require("/stickers/Cat2/Cat2-3.png"), title: 'Cat2-3',},
@@ -65,6 +65,14 @@ export const stickers = [
     {img: require("/stickers/Dog2/Dog2-dog12.png"), title: 'Dog2-dog12',},
     {img: require("/stickers/Dog2/Dog2-dog13.png"), title: 'Dog2-dog13',},
     {img: require("/stickers/Dog2/Dog2-dog14.png"), title: 'Dog2-dog14',},
+
+    {img: require("/stickers/Winter1/Winter1-Fox.png"), title: 'Winter1-Fox',},
+    {img: require("/stickers/Winter1/Winter1-Hedgehog.png"), title: 'Winter1-Hedgehog',},
+    {img: require("/stickers/Winter1/Winter1-Moose.png"), title: 'Winter1-Moose',},
+    {img: require("/stickers/Winter1/Winter1-Penguin.png"), title: 'Winter1-Penguin',},
+    {img: require("/stickers/Winter1/Winter1-Polar-Bear.png"), title: 'Winter1-Polar-Bear',},
+    {img: require("/stickers/Winter1/Winter1-Raccoon.png"), title: 'Winter1-Raccoon',},
+    {img: require("/stickers/Winter1/Winter1-Squirrel.png"), title: 'Winter1-Squirrel',},
 
     {img: require("/stickers/Teacher/Teacher-100.png"), title: 'Teacher-100',},
     {img: require("/stickers/Teacher/Teacher-awesome.png"), title: 'Teacher-awesome',},

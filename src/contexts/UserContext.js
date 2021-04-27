@@ -83,14 +83,19 @@ export function UserProvider({ children }) {
                 teacher: doc.data().teacher,
                 assignments: doc.data().assignments,
             }
+            if (loadedClasses.length < classes.length) {
+              loadedClasses.push(classes);
+            }
             loadedClasses.push(details);
+            setClasses(loadedClasses);
+            console.log("loaded classes: " + loadedClasses);
+            console.log("loaded classes: " + classes);
+            setAssignments(details.assignments);
         });
-        setClasses(loadedClasses)
-        setAssignments(loadedClasses[0].assignments)
         }).catch((error) => {
             console.log("Error getting document:", error);
         }).finally(() => {
-          setLoadingClasses(false)
+          setLoadingClasses(false);
         });
     return
   }
@@ -129,7 +134,10 @@ export function UserProvider({ children }) {
     setSelectedStudent(selected)
     const st = students[selected]
     if (classes.length > 0) {
-        classes.filter(c => (c.teacher === st.teacher && c.class === st.class)).map( studentsClass => setAssignments(studentsClass.assignments))
+
+      console.log("classes: " + loadedClasses);
+      console.log("classes: " + classes);
+      classes.filter(c => (c.teacher === st.teacher && c.class === st.class)).map( studentsClass => setAssignments(studentsClass.assignments))
     }
     return
   }
