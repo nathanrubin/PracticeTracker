@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: 14,
   },
+  content: {
+    fontSize: 12,
+  },
   container: {
     padding: theme.spacing(1)
   },
@@ -77,7 +80,7 @@ export function SideBar ({student}) {
             {student.teacherStickers.map((s) => (
               <GridListTile key={s.split('/')[1]}>
                 <Avatar key={s.split('/')[1]} src={getImgByTitle(s.split('/')[1])} className={classes.awardAvatar} />
-                <Typography className={classes.title} color="primary" gutterBottom>{s.split('/')[0]}</Typography>
+                <Typography className={classes.content} color="primary" gutterBottom>{s.split('/')[0]}</Typography>
               </GridListTile>
             ))}
           </GridList>
@@ -94,13 +97,14 @@ export function SideBar ({student}) {
           <Typography className={classes.title} color="textSecondary" gutterBottom>Class: </Typography>
         </Grid>
         <Grid item xs={8}>
-          <Typography className={classes.title} color="secondary" gutterBottom>{student? student.teacher : ""} - {student? student.class: ""}</Typography>
+          <Typography className={classes.content} color="secondary" gutterBottom>{student? student.teacher : ""} - {student? student.class: ""}</Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Songs: </Typography>
         </Grid>
         <Grid item xs={8}>
-          <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">Play Along Songs</a>
+          <a style={{ color: wagner.coral }} href="https://www.wagnersmusic.com/playalong-songs">
+          <Typography className={classes.content} color="secondary" gutterBottom>Play Along Songs</Typography></a>
         </Grid>
         <Grid item xs={5}>
           <Typography className={classes.title} color="textSecondary" gutterBottom>Sticker Pack: </Typography>

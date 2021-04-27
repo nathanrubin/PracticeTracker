@@ -340,7 +340,7 @@ export default function Weekly() {
             Pick a sticker:
           </DialogContentText>
             {getStickers(students.length && students[selectedStudent].stickerPack).map((tile) => (
-                <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img}>
+                <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img} style={{padding: '5px'}}>
                     <Avatar src={tile.img} />
                 </IconButton>
             ))}
