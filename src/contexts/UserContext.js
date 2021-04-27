@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react"
 import { firestore } from "../firebase"
 import { useAuth } from "./AuthContext"
 import moment from 'moment';
+import {availablePacks, getStickers} from '../stickers';
 
 const UserContext = React.createContext()
 
@@ -46,7 +47,8 @@ export function UserProvider({ children }) {
               teacherStickers: doc.data().teacherStickers,
               weekdaysComplete: doc.data().weekdaysComplete,
               myStickers: doc.data().myStickers ? doc.data().myStickers : [],
-              isNewWeek: false
+              isNewWeek: false,
+              isMissingPack: false
             }
             emptyStickers.forEach((empty, id) => {
               if(details.myStickers[id] === undefined) {
@@ -54,6 +56,7 @@ export function UserProvider({ children }) {
               }
             });
             details.isNewWeek = isNewWeek(details)
+            details.isMissingPack = isMissingPack(details)
             dbStudents.push(details);
             loadClass(details.teacher, details.class);
             setLoadingClasses(true);
@@ -179,9 +182,21 @@ export function UserProvider({ children }) {
 
   function saveStickerPack(pack) {
     const studentId = students[selectedStudent].id;
-    students[selectedStudent].stickerPack = moment().format("YYYY MMM DD") + "/" + pack;
-    students[selectedStudent].myStickers = emptyStickers;
-    students[selectedStudent].isNewWeek = false;
+    if (students[selectedStudent].isNewWeek) {
+      students[selectedStudent].stickerPack = moment().format("YYYY MMM DD") + "/" + pack;
+      students[selectedStudent].myStickers = emptyStickers;
+      students[selectedStudent].isNewWeek = false;
+    } else {
+      const originalPackDate = students[selectedStudent].stickerPack.split("/")[0];
+      students[selectedStudent].stickerPack = originalPackDate + "/" + pack;
+
+      var newStickers = []
+      const newSticker = getStickers(pack)[0].title
+      students[selectedStudent].myStickers.forEach(s => newStickers.push(s ? newSticker : ""));
+      students[selectedStudent].myStickers = newStickers;
+      students[selectedStudent].isMissingPack = false;
+    }
+
     firestore.collection("students").doc(studentId).update( {
         stickerPack: students[selectedStudent].stickerPack,
         myStickers: students[selectedStudent].myStickers
@@ -208,6 +223,7 @@ export function UserProvider({ children }) {
         console.log("Saved student");
         newStudent.id = studentId;
         newStudent.isNewWeek = true;
+        newStudent.isMissingPack = false;
         students.push(newStudent)
         setSelectedStudent(students.length-1)
         loadClass(newStudent.teacher, newStudent.class);
@@ -291,6 +307,15 @@ export function UserProvider({ children }) {
 
    return true
  }
+
+ function isMissingPack(student) {
+    if (student && student.stickerPack.includes("/")) {
+      const split = student.stickerPack.split("/");
+      return !availablePacks.includes(split[1]);
+    }
+
+    return true
+  }
 
   const value = {
     teachers,

@@ -261,7 +261,7 @@ export default function Weekly() {
     setOpenPack(false)
   }
   const handleOpenPack = () => {
-    if (students.length && students[selectedStudent].isNewWeek) {
+    if (students.length && (students[selectedStudent].isNewWeek || students[selectedStudent].isMissingPack)) {
       setOpenPack(true)
       return true
     }
