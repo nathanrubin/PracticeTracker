@@ -86,8 +86,15 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     padding: 0,
     height: 16,
+    fontSize: '12px',
     color: wagner.coral,
     backgroundColor: theme.palette.background.paper,
+  },
+  '@global': {
+    '.MuiChip-labelSmall': {
+      paddingLeft: '5px',
+      paddingRight: '5px'
+    }
   },
   stickerContainer: {
     display: 'flex',
