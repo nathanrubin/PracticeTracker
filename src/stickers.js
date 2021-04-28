@@ -2,7 +2,7 @@ export function getImgByTitle(title) {
   return stickers.filter((sticker) => sticker.title === title).map(sticker => sticker.img)[0]
 }
 
-export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space2', 'Cat2', 'Dog2', 'Winter1'];
+export const availablePacks = ['Music1', 'Music2', 'Animal1', 'Animal2', 'Space2', 'Cat2', 'Dog2'];
 export function getStickers(datePack) {
   const pack = datePack && datePack.includes('/') ? datePack.split('/')[1] : datePack
   const myStickers = stickers.filter(s => s.title.includes(pack.length? pack : availablePacks[0]));
@@ -65,14 +65,6 @@ export const stickers = [
     {img: require("/stickers/Dog2/Dog2-dog12.png"), title: 'Dog2-dog12',},
     {img: require("/stickers/Dog2/Dog2-dog13.png"), title: 'Dog2-dog13',},
     {img: require("/stickers/Dog2/Dog2-dog14.png"), title: 'Dog2-dog14',},
-
-    {img: require("/stickers/Winter1/Winter1-Fox.png"), title: 'Winter1-Fox',},
-    {img: require("/stickers/Winter1/Winter1-Hedgehog.png"), title: 'Winter1-Hedgehog',},
-    {img: require("/stickers/Winter1/Winter1-Moose.png"), title: 'Winter1-Moose',},
-    {img: require("/stickers/Winter1/Winter1-Penguin.png"), title: 'Winter1-Penguin',},
-    {img: require("/stickers/Winter1/Winter1-Polar-Bear.png"), title: 'Winter1-Polar-Bear',},
-    {img: require("/stickers/Winter1/Winter1-Raccoon.png"), title: 'Winter1-Raccoon',},
-    {img: require("/stickers/Winter1/Winter1-Squirrel.png"), title: 'Winter1-Squirrel',},
 
     {img: require("/stickers/Teacher/Teacher-100.png"), title: 'Teacher-100',},
     {img: require("/stickers/Teacher/Teacher-awesome.png"), title: 'Teacher-awesome',},
