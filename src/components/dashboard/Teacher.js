@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Dashboard() {
+export default function Teacher() {
   const classes = useStyles();
   const { students, selectedStudent, selectStudent, assignments, saveStudent, teachers, getTeacherClassDays, getClassTimes } = useUser()
   const [error, setError] = useState("")
@@ -178,104 +178,21 @@ export default function Dashboard() {
     <div className={classes.root}>
       <AppBar position="absolute" color="inherit" className={classes.appBar} elevation={1}>
         <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer(true)}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} onClick={() => window.location.reload(false)}>
-            PRACTICE TRACKER
-          </Typography>
-          <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-            <AccountCircle color="primary" />
-          </IconButton>
-          <Menu
-            id="student-select"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            {students.map(({first}, index) => (
-              <MenuItem key={index} value={index} selected={index === selectedStudent} onClick={(event) => switchStudent(event, index)}>
-                {first}
-              </MenuItem>
-            ))}
-            <MenuItem key="add-student" value="add-student" onClick={() => addStudentOpen()}>
-              Add Student
-            </MenuItem>
-          </Menu>
+            Teacher
+          </Typography>         
         </Toolbar>
       </AppBar>
-
-      {/* Side bar  */}
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-      <div className={classes.list}>
-        <DialogTitle disableTypography className={classes.drawerTitle}>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {students[selectedStudent] ? students[selectedStudent].first : "Student"}'s Profile
-          </Typography>
-          <IconButton onClick={toggleDrawer(false)}>
-              <Close />
-          </IconButton>
-        </DialogTitle>
-        <Divider />
-        <SideBar student={students[selectedStudent]}/>
-      </div>
-      </Drawer>
       
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
+
         <Container maxWidth="lg" className={classes.container}>
           {error && <Alert severity="error">{error}</Alert>}
-          <Weekly />
+          TODO
+          {/* List Teachers - On select load Teacher */}
         </Container>
 
-          <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students.length}>
-          <DialogTitle>Add Student</DialogTitle>
-          <DialogContent>
-            <form className={classes.addStudent} autoComplete="off">
-              <TextField autoFocus id="first-name" label="First name" error={firstError.length>0} helperText={firstError} inputRef={firstRef} onChange={handleValidation}/>
-              <TextField id="last-name" label="Last name" inputRef={lastRef} onChange={handleValidation}/>
-              <TextField id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange}>
-                {teachers.map((option) => (
-                  <MenuItem key={option.name} value={option.name}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField id="class" label="Day" style={{ width: '91px' }} select value={selectedClass} onChange={handleClassChange}>
-                {teacherClasses.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField id="times" label="Time" style={{ width: '91px' }} select value={selectedTime} onChange={handleTimeChange}>
-                {classTimes.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => saveNewStudent()} color="primary" disabled={!isEnabled}>
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
       </main>
     </div>
   );

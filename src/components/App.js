@@ -2,7 +2,10 @@ import React, {useState} from "react"
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { UserProvider } from "../contexts/UserContext"
+import { AdminProvider } from "../contexts/AdminContext"
 import Dashboard from "./dashboard/Dashboard"
+import Admin from "./dashboard/Admin"
+import Teacher from "./dashboard/Teacher"
 import LogIn from "./LogIn"
 import Landing from "./Landing"
 import ForgotPassword from "./ForgotPassword"
@@ -13,14 +16,23 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { normal, dark } from '../theme';
 
 function App() {
-  const { currentUser } = useAuth()
+  const { currentUser, isAdmin, isTeacher } = useAuth()
   const [theme, setTheme] = useState(true)
   const appliedTheme = createMuiTheme(theme ? normal : dark )
+
+  const authAdminRoutes = () => (
+    <AdminProvider>
+      <Switch>
+        <Route exact path="/" component={isTeacher? Teacher : Admin} />
+        <Redirect from="/**" to="/" />
+      </Switch>
+    </AdminProvider>
+  );
 
   const authRoutes = () => (
     <UserProvider>
       <Switch>
-        <Route exact path="/" component={Dashboard} />
+        <Route exact path="/" component={isAdmin? Admin : isTeacher? Teacher : Dashboard} />
         <Redirect from="/**" to="/" />
       </Switch>
     </UserProvider>
@@ -39,7 +51,7 @@ function App() {
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
       <Router>
-        {currentUser && currentUser.emailVerified? authRoutes():routes()}
+        {isAdmin || isTeacher ? authAdminRoutes() : currentUser && currentUser.emailVerified ? authRoutes() : routes()}
       </Router>
     </ThemeProvider>
   )

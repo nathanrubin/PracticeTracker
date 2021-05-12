@@ -12,6 +12,9 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
   const [registered, setRegistered] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isTeacher, setIsTeacher] = useState(false)
+  const [name, setName] = useState('')
 
   function signup(email, password) {
     return auth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
@@ -54,6 +57,39 @@ export function AuthProvider({ children }) {
 
       if (user) {
         setLoading(true)
+        
+        firestore.collection("admins").doc(user.email)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log('Not an admin');
+              // Check if Teacher
+              firestore.collection("teachers").doc(user.email).get().then((doc) => {
+                if (!doc.exists) {
+                  console.log('Not a teacher');
+                } else {
+                  setIsTeacher(true)
+                  setName(doc.data().name)
+                }
+                setLoading(false)
+              })
+            } else {
+              setIsAdmin(true)
+              setName(doc.data().name)
+            }
+            setLoading(false)
+          })
+      }
+    })
+
+    return unsubscribe
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+
+      if (user) {
+        setLoading(true)
         firestore.collection("accounts").where('emails', 'array-contains', user.email).limit(1)
           .get()
           .then((querySnapshot) => {
@@ -79,6 +115,9 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser,
     registered,
+    isAdmin,
+    isTeacher,
+    name,
     login,
     signup,
     logout,
