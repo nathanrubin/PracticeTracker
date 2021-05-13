@@ -32,7 +32,7 @@ function App() {
   const authRoutes = () => (
     <UserProvider>
       <Switch>
-        <Route exact path="/" component={isAdmin? Admin : isTeacher? Teacher : Dashboard} />
+        <Route exact path="/" component={Dashboard} />
         <Redirect from="/**" to="/" />
       </Switch>
     </UserProvider>

@@ -1,36 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useUser } from "../../contexts/UserContext"
+import { useHistory } from "react-router-dom";
 
-import clsx from 'clsx';
+import { useAuth } from "../../contexts/AuthContext"
+import { useAdmin } from "../../contexts/AdminContext"
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
 
-import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import DialogTitle from '@material-ui/core/DialogTitle'
-import MenuIcon from '@material-ui/icons/Menu';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Icon from '@material-ui/core/Icon';
+import ChevronRight from '@material-ui/icons/ChevronRight'
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Close from '@material-ui/icons/Close';
-import { SideBar } from './SideBar';
-import Weekly from './Weekly';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button'
-
-import Menu from '@material-ui/core/Menu';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBack from '@material-ui/icons/ArrowBack'
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+  },
+  teacherList: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
   },
   toolbar: {
     paddingRight: 0, // keep right padding when drawer closed
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   list: {
-    width: 250
+    width: 300
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -101,86 +101,54 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function ListItemLink(props) {
+    return <ListItem button component="a" {...props} />;
+}
+
 export default function Teacher() {
   const classes = useStyles();
-  const { students, selectedStudent, selectStudent, assignments, saveStudent, teachers, getTeacherClassDays, getClassTimes } = useUser()
+  let history = useHistory();
+
+  const { logout, isAdmin, setIsTeacher, name } = useAuth()
+  const { teachers, selectedTeacher, selectTeacher } = useAdmin()
   const [error, setError] = useState("")
-  const [open, setOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedTeacher, setSelectedTeacher] = React.useState('');
-  const [selectedClass, setSelectedClass] = React.useState('');
-  const [selectedTime, setSelectedTime] = React.useState('');
-  const [teacherClasses, setTeacherClasses] = React.useState([]);
-  const [classTimes, setClassTimes] = React.useState([]);
-  const [isEnabled, setIsEnabled] = React.useState(false);
-  const [firstError, setFirstError] = React.useState('');
-  const firstRef = useRef()
-  const lastRef = useRef()
 
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
+  function adminBack() {
+    selectTeacher('')
+  }
+
+  async function handleLogout() {
+    try {
+      await logout()
+      console.log("logout history push.")
+      history.go("/")
+    } catch {
+      console.log("failed to log out")
     }
-    setOpen(open);
-  };
-
-  const switchStudent = (event, index) => {
-    selectStudent(index)
-    setAnchorEl(null)
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const addStudentOpen = () => {
-    console.log("opening adding student")
-    setOpenDialog(true);
-  }
-  const addStudentClose = () => {
-    console.log("class add student")
-    setOpenDialog(false);
-    setAnchorEl(null)
-  }
-  const saveNewStudent = () => {
-    console.log("saving student: " + firstRef.current.value + " " + lastRef.current.value + " " + selectedTeacher + " " + selectedClass + " " + selectedTime);
-    setOpenDialog(false);
-    setAnchorEl(null)
-    saveStudent(firstRef.current.value, lastRef.current.value, selectedTeacher, selectedClass, selectedTime)
   }
   
-  const handleTeacherChange = (event) => {
-    setSelectedTeacher(event.target.value);
-    setTeacherClasses(getTeacherClassDays(event.target.value))
-    setSelectedClass('')
-    setSelectedTime('')
-    setIsEnabled(false)
-  };
-  const handleClassChange = (event) => {
-    setSelectedClass(event.target.value);
-    setClassTimes(getClassTimes(selectedTeacher, event.target.value))
-    setSelectedTime('')
-    setIsEnabled(false)
-  };
-  const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
-    setIsEnabled(!firstError && firstRef.current.value && lastRef.current.value)
-  };
-  const handleValidation = () => {
-    const isValidFirst = !students.length || students.filter(s => s.first === firstRef.current.value).length == 0
-    setIsEnabled(isValidFirst && firstRef.current.value && lastRef.current.value && selectedTeacher && selectedClass && selectedTime);
-    setFirstError(isValidFirst ? "" : "First name must be unique.");
-  };
+  function renderAdminBack() {
+    return ( isAdmin ? 
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="back"
+        onClick={() => adminBack()}
+        >
+        <ArrowBack />
+      </IconButton>
+     : '')
+  }
 
   return (
     <div className={classes.root}>
       <AppBar position="absolute" color="inherit" className={classes.appBar} elevation={1}>
         <Toolbar className={classes.toolbar}>
+          {renderAdminBack()}
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} onClick={() => window.location.reload(false)}>
-            Teacher
-          </Typography>         
+            {selectedTeacher && selectedTeacher.name}
+          </Typography>
+          <Button color="primary" onClick={handleLogout}>Log out</Button>   
         </Toolbar>
       </AppBar>
       
@@ -189,8 +157,17 @@ export default function Teacher() {
 
         <Container maxWidth="lg" className={classes.container}>
           {error && <Alert severity="error">{error}</Alert>}
-          TODO
-          {/* List Teachers - On select load Teacher */}
+          <Grid container spacing={0}>
+          <Card className={classes.list}>
+
+            <Grid item xs={12}>
+                <div className={classes.teacherList}>
+                Teacher View
+                </div>
+            </Grid>
+
+            </Card>
+          </Grid>
         </Container>
 
       </main>

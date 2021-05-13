@@ -6,18 +6,19 @@ import {availablePacks, getStickers} from '../stickers';
 
 const AdminContext = React.createContext()
 
-export function useUser() {
+export function useAdmin() {
   return useContext(AdminContext)
 }
 
 export function AdminProvider({ children }) {
-  const { isAdmin } = useAuth()
+  const { isAdmin, isTeacher, setIsTeacher, name } = useAuth()
   const [loadingTeachers, setLoadingTeachers] = useState(true)
   const [teachers, setTeachers] = useState([])
+  const [selectedTeacher, setSelectedTeacher] = useState('')
 
   useEffect(() => {
     {console.log("loading admin context")}
-    if (!isAdmin) {
+    if (!(isAdmin || isTeacher)) {
       return 
     }
 
@@ -35,6 +36,9 @@ export function AdminProvider({ children }) {
               classes: doc.data().classes ? doc.data().classes : []
             }
             dbTeachers.push(details);
+            if (isTeacher && details.name == name) {
+                setSelectedTeacher(details);
+            }
         });
         if (dbTeachers.length > 0){
           setTeachers(dbTeachers)
@@ -48,12 +52,21 @@ export function AdminProvider({ children }) {
   }, [])
 
 
+  function selectTeacher(selected) {
+    setSelectedTeacher(selected)
+    setIsTeacher(selected)
+    console.log("selected: " + selected.name)
+    return
+  }
+
   function today() {
     return moment().isoWeekday() % 7
   }
 
   const value = {
-    teachers
+    teachers,
+    selectedTeacher,
+    selectTeacher
   }
 
   return (

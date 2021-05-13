@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useHistory } from "react-router-dom";
+
 import { useAuth } from "../../contexts/AuthContext"
-import { useUser } from "../../contexts/AdminContext"
+import { useAdmin } from "../../contexts/AdminContext"
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
 
@@ -17,6 +19,7 @@ import ChevronRight from '@material-ui/icons/ChevronRight'
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,16 +103,30 @@ function ListItemLink(props) {
     return <ListItem button component="a" {...props} />;
 }
 
+
+
 export default function Admin() {
   const classes = useStyles();
-  const { name } = useAuth()
-  const { teachers } = useUser()
+  let history = useHistory();
+
+  const { logout, name } = useAuth()
+  const { teachers, selectTeacher } = useAdmin()
   const [error, setError] = useState("")
 
-
-  async function handleLoadTeacher(name) {
+  async function handleLogout() {
     try {
-      console.log("load teachers page for: " + name)
+      await logout()
+      console.log("logout history push.")
+      history.go("/")
+    } catch {
+      console.log("failed to log out")
+    }
+  }
+
+  async function handleLoadTeacher(teacher) {
+    try {
+      console.log("load teachers page for: " + teacher.name)
+      selectTeacher(teacher);
     } catch {
       console.log("failed to load teacher")
     }
@@ -120,8 +137,9 @@ export default function Admin() {
       <AppBar position="absolute" color="inherit" className={classes.appBar} elevation={1}>
         <Toolbar className={classes.toolbar}>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} onClick={() => window.location.reload(false)}>
-            PRACTICE TRACKER - {name}
-          </Typography>         
+            {name}
+          </Typography> 
+          <Button color="primary" onClick={handleLogout}>Log out</Button>  
         </Toolbar>
       </AppBar>
       
@@ -138,7 +156,7 @@ export default function Admin() {
                 <List component="nav" aria-label="main mailbox folders">
                     {teachers.map((value, id) => {
                         return (
-                        <ListItem button key={id} onClick={() => handleLoadTeacher(value.name)}>
+                        <ListItem button key={id} onClick={() => handleLoadTeacher(value)}>
                             <ListItemIcon ><AccountCircle color='secondary'/></ListItemIcon>
                             <ListItemText primary={value.name} />
                             <Icon edge="end" aria-label="go">

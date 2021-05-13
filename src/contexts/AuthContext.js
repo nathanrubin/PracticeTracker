@@ -124,7 +124,8 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail,
     updatePassword,
-    sendEmailVerification
+    sendEmailVerification,
+    setIsTeacher
   }
 
   return (
