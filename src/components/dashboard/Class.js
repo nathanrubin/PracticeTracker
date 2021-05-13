@@ -102,64 +102,35 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function ListItemLink(props) {
-    return <ListItem button component="a" {...props} />;
-}
 
-export default function Teacher() {
+
+export default function Class() {
   const classes = useStyles();
   let history = useHistory();
 
   const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { teachers, selectedTeacher, selectTeacher, selectClass, getClassDays, getClassTimes, getLongDay } = useAdmin()
+  const { teachers, selectedTeacher, selectClass, selectedClass, getClassDays, getClassTimes, getLongDay } = useAdmin()
   const [error, setError] = useState("")
 
-  function adminBack() {
-    selectTeacher('')
-  }
-
-  async function handleLogout() {
-    try {
-      await logout()
-      console.log("logout history push.")
-      history.go("/")
-    } catch {
-      console.log("failed to log out")
-    }
-  }
-  
-  function renderAdminBack() {
-    return ( isAdmin ? 
-      <IconButton
-        edge="start"
-        color="inherit"
-        aria-label="back"
-        onClick={() => adminBack()}
-        >
-        <ArrowBack />
-      </IconButton>
-     : '')
-  }
-
-  function renderClassTimes(day) {
-    const times = getClassTimes(selectedTeacher, day)
-    console.log(times)
-    return (<React.Fragment>
-        {times.map((time, id) => {
-          return(<Button color={id % 2 == 0?"inherit": "primary"} style={{textTransform: 'none'}} key={id} onClick={() => selectClass(day + " " + time)}>{time}</Button>)
-        })}</React.Fragment>
-    )
+  function goBack() {
+    selectClass('')
   }
 
   return (
     <div className={classes.root}>
       <AppBar position="absolute" color="inherit" className={classes.appBar} elevation={1}>
         <Toolbar className={classes.toolbar}>
-          {renderAdminBack()}
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="back"
+            onClick={() => goBack()}
+            >
+            <ArrowBack />
+          </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} onClick={() => window.location.reload(false)}>
-            {selectedTeacher && selectedTeacher.name}
+            {selectedTeacher && selectedTeacher.name} - {selectedClass}
           </Typography>
-          <Button color="primary" onClick={handleLogout}>Log out</Button>   
         </Toolbar>
       </AppBar>
       
@@ -173,21 +144,17 @@ export default function Teacher() {
 
             <Grid item xs={12}>
                 <div className={classes.teacherList}>
-                
-                <List component="nav" aria-label="main mailbox folders">
-                    {getClassDays(selectedTeacher).map((day, id) => {
-                        return (
-                        <ListItem key={id}>
-                            <ListItemText 
-                              primary={<Typography variant="h6" className={classes.title} color="secondary">{getLongDay(day)}</Typography>} 
-                              secondary={renderClassTimes(day)}
-                            />
-                        </ListItem>
-                        )
-                    })}
-                </List>
+                Show Class Details.
 
                 </div>
+            
+            </Grid>
+            <Grid item xs={12}>
+                <div className={classes.teacherList}>
+                Show Weekly Assignments.
+
+                </div>
+            
             </Grid>
 
             </Card>

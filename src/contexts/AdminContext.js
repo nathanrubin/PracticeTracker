@@ -11,10 +11,11 @@ export function useAdmin() {
 }
 
 export function AdminProvider({ children }) {
-  const { isAdmin, isTeacher, setIsTeacher, name } = useAuth()
+  const { isAdmin, isTeacher, setIsTeacher, setIsClass, name } = useAuth()
   const [loadingTeachers, setLoadingTeachers] = useState(true)
   const [teachers, setTeachers] = useState([])
   const [selectedTeacher, setSelectedTeacher] = useState('')
+  const [selectedClass, setSelectedClass] = useState('')
 
   useEffect(() => {
     {console.log("loading admin context")}
@@ -59,6 +60,13 @@ export function AdminProvider({ children }) {
     return
   }
 
+  function selectClass(selected) {
+    setSelectedClass(selected)
+    setIsClass(selected)
+    console.log("selected: " + selected)
+    return
+  }
+
   function getClassDays(teacher) {
     console.log(teacher)
     const days = teacher.classes.map(c => c.trim().split(" ")[0].toLowerCase()) // ["fri 4:00p", "mon 3:15p"] => ["fri", "mon"]
@@ -85,7 +93,9 @@ export function AdminProvider({ children }) {
   const value = {
     teachers,
     selectedTeacher,
+    selectedClass,
     selectTeacher,
+    selectClass,
     getClassDays,
     getClassTimes,
     getLongDay

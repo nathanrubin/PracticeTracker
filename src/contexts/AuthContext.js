@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isTeacher, setIsTeacher] = useState(false)
+  const [isClass, setIsClass] = useState(false)
   const [name, setName] = useState('')
 
   function signup(email, password) {
@@ -117,6 +118,7 @@ export function AuthProvider({ children }) {
     registered,
     isAdmin,
     isTeacher,
+    isClass,
     name,
     login,
     signup,
@@ -125,7 +127,8 @@ export function AuthProvider({ children }) {
     updateEmail,
     updatePassword,
     sendEmailVerification,
-    setIsTeacher
+    setIsTeacher,
+    setIsClass
   }
 
   return (

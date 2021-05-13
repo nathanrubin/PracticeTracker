@@ -6,6 +6,7 @@ import { AdminProvider } from "../contexts/AdminContext"
 import Dashboard from "./dashboard/Dashboard"
 import Admin from "./dashboard/Admin"
 import Teacher from "./dashboard/Teacher"
+import Class from "./dashboard/Class"
 import LogIn from "./LogIn"
 import Landing from "./Landing"
 import ForgotPassword from "./ForgotPassword"
@@ -16,14 +17,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { normal, dark } from '../theme';
 
 function App() {
-  const { currentUser, isAdmin, isTeacher } = useAuth()
+  const { currentUser, isAdmin, isTeacher, isClass } = useAuth()
   const [theme, setTheme] = useState(true)
   const appliedTheme = createMuiTheme(theme ? normal : dark )
 
   const authAdminRoutes = () => (
     <AdminProvider>
       <Switch>
-        <Route exact path="/" component={isTeacher? Teacher : Admin} />
+        <Route exact path="/" component={isClass? Class : isTeacher? Teacher : Admin} />
         <Redirect from="/**" to="/" />
       </Switch>
     </AdminProvider>
