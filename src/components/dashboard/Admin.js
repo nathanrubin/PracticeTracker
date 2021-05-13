@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
   teacherList: {
     width: '100%',
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
   toolbar: {
@@ -64,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   list: {
-    width: 300
+    width: 400
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
