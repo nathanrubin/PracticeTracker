@@ -59,6 +59,25 @@ export function AdminProvider({ children }) {
     return
   }
 
+  function getClassDays(teacher) {
+    console.log(teacher)
+    const days = teacher.classes.map(c => c.trim().split(" ")[0].toLowerCase()) // ["fri 4:00p", "mon 3:15p"] => ["fri", "mon"]
+    var uniqueDays = Array.from(new Set(days));
+    let sorted = uniqueDays.sort((a, b) => moment(a, 'ddd').weekday() - moment(b, 'ddd').weekday() );
+    console.log(sorted)
+    return sorted
+  }
+ 
+  function getClassTimes(teacher, day) {
+   var times = teacher.classes.filter(c => c.includes(day)).map(c => c.trim().split(" ")[1].toLowerCase()); // ["mon 4:00p", "mon 3:15p"] => ["3:15p", "4:00p"]
+   times.sort((a, b) => moment(a,'h:mma') - moment(b,'h:mma'));
+   return times
+  }
+
+  function getLongDay(short) {
+    return moment(short, 'ddd').format('dddd').toUpperCase()
+  }
+
   function today() {
     return moment().isoWeekday() % 7
   }
@@ -66,7 +85,10 @@ export function AdminProvider({ children }) {
   const value = {
     teachers,
     selectedTeacher,
-    selectTeacher
+    selectTeacher,
+    getClassDays,
+    getClassTimes,
+    getLongDay
   }
 
   return (

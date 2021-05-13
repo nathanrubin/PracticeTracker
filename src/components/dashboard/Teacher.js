@@ -22,6 +22,7 @@ import ArrowBack from '@material-ui/icons/ArrowBack'
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   list: {
-    width: 300
+    width: 400
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -110,7 +111,7 @@ export default function Teacher() {
   let history = useHistory();
 
   const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { teachers, selectedTeacher, selectTeacher } = useAdmin()
+  const { teachers, selectedTeacher, selectTeacher, getClassDays, getClassTimes, getLongDay } = useAdmin()
   const [error, setError] = useState("")
 
   function adminBack() {
@@ -140,6 +141,15 @@ export default function Teacher() {
      : '')
   }
 
+  function renderClassTimes(times) {
+    console.log(times)
+    return (<div>
+        {times.map((time, id) => {
+          return(<Button size="small" color={id % 2 == 0?"inherit": "primary"} style={{textTransform: 'none'}} key={id}>{time}</Button>)
+        })}</div>
+    )
+  }
+
   return (
     <div className={classes.root}>
       <AppBar position="absolute" color="inherit" className={classes.appBar} elevation={1}>
@@ -162,7 +172,20 @@ export default function Teacher() {
 
             <Grid item xs={12}>
                 <div className={classes.teacherList}>
-                Teacher View
+                
+                <List component="nav" aria-label="main mailbox folders">
+                    {getClassDays(selectedTeacher).map((day, id) => {
+                        return (
+                        <ListItem key={id}>
+                            <ListItemText 
+                              primary={<Typography className={classes.title} color="secondary" gutterBottom>{getLongDay(day)}</Typography>} 
+                              secondary={renderClassTimes(getClassTimes(selectedTeacher, day))}
+                            />
+                        </ListItem>
+                        )
+                    })}
+                </List>
+
                 </div>
             </Grid>
 
