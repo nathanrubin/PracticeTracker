@@ -17,6 +17,9 @@ export function AdminProvider({ children }) {
   const [selectedTeacher, setSelectedTeacher] = useState('')
   const [selectedClass, setSelectedClass] = useState('')
 
+  const [classDetails, setClassDetails] = useState({})
+  const [classStudents, setClassStudents] = useState([])
+
   useEffect(() => {
     {console.log("loading admin context")}
     if (!(isAdmin || isTeacher)) {
@@ -60,10 +63,64 @@ export function AdminProvider({ children }) {
     return
   }
 
-  function selectClass(selected) {
-    setSelectedClass(selected)
-    setIsClass(selected)
-    console.log("selected: " + selected)
+  async function selectClass(classDateTime) {
+    if (classDateTime && selectedTeacher) {
+      console.log("class data and teacher selected. " + classDateTime)
+      loadClassDetails(selectedTeacher.name, classDateTime);
+      await loadClassStudents(selectedTeacher.name, classDateTime);
+      setSelectedClass(classDateTime);
+      setIsClass(classDateTime);
+    } else {
+      setClassStudents([])
+      setClassDetails('')
+      setSelectedClass('')
+      setIsClass('')
+    }
+    return
+  }
+
+  function loadClassDetails(teacher, classDateTime) {
+    firestore.collection("classes").where("teacher", "==", teacher).where("class", "==", classDateTime).limit(1)
+    .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const details = {
+                id: doc.id,
+                email: doc.data().email,
+                class: doc.data().class,
+                teacher: doc.data().teacher,
+                assignments: doc.data().assignments,
+            }
+            setClassDetails(details);
+            return details
+        });
+        }).catch((error) => {
+            console.log("Error getting class details:", error);
+            return ''
+        })
+  }
+
+  async function loadClassStudents(teacher, classDateTime) {
+
+    await firestore.collection("students").where("teacher", "==", teacher).where("class", "==", classDateTime)
+    .get()
+    .then((querySnapshot) => {
+        const students = []
+
+        querySnapshot.forEach((doc) => {
+            const student = {
+                id: doc.id,
+                first: doc.data().first,
+                last: doc.data().last,
+                myStickers: doc.data().myStickers,
+                teacherStickers: doc.data().teacherStickers
+            }
+            students.push(student);
+            setClassStudents(students);
+        });
+        }).catch((error) => {
+            console.log("Error getting class students:", error);
+        })
     return
   }
 
@@ -94,6 +151,8 @@ export function AdminProvider({ children }) {
     teachers,
     selectedTeacher,
     selectedClass,
+    classDetails,
+    classStudents,
     selectTeacher,
     selectClass,
     getClassDays,

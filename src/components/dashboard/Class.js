@@ -109,7 +109,7 @@ export default function Class() {
   let history = useHistory();
 
   const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { teachers, selectedTeacher, selectClass, selectedClass, getClassDays, getClassTimes, getLongDay } = useAdmin()
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents } = useAdmin()
   const [error, setError] = useState("")
 
   function goBack() {
@@ -144,14 +144,30 @@ export default function Class() {
 
             <Grid item xs={12}>
                 <div className={classes.teacherList}>
-                Show Class Details.
+                {classStudents.map((student, id) => {
+                    return (
+                        <ListItem key={id}>
+                            <ListItemText 
+                              primary={student.first} 
+                            />
+                        </ListItem>
+                        )
+                })}
 
                 </div>
             
             </Grid>
             <Grid item xs={12}>
                 <div className={classes.teacherList}>
-                Show Weekly Assignments.
+                {classDetails.assignments.map((assignment, id) => {
+                    return (
+                        <ListItem key={id}>
+                            <ListItemText 
+                              primary={assignment} 
+                            />
+                        </ListItem>
+                        )
+                })}
 
                 </div>
             
