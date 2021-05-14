@@ -21,12 +21,17 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+  },
+  rootAssignments: {
+    backgroundColor: theme.palette.background.paper
   },
   teacherList: {
     width: '100%',
@@ -99,7 +104,13 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
       width: '25ch',
     },
-  }
+  },
+  headerAssignments: {
+  },
+  assignmentTitle: {
+    textTransform: 'uppercase',
+    fontWeight: 300
+  },
 }));
 
 
@@ -140,11 +151,15 @@ export default function Class() {
         <Container maxWidth="lg" className={classes.container}>
           {error && <Alert severity="error">{error}</Alert>}
           <Grid container spacing={0}>
-          <Card className={classes.list}>
+          <Grid item xs={12}>
 
-            <Grid item xs={12}>
+          <Card className={classes.rootAssignments}>
+            <CardHeader className={classes.headerAssignments}
+                title={<div className={classes.assignmentTitle}>Weekly Assignments</div>}
+            />
+
                 <div className={classes.teacherList}>
-                {classStudents.map((student, id) => {
+                {classStudents && classStudents.map((student, id) => {
                     return (
                         <ListItem key={id}>
                             <ListItemText 
@@ -156,15 +171,12 @@ export default function Class() {
 
                 </div>
             
-            </Grid>
             <Grid item xs={12}>
                 <div className={classes.teacherList}>
-                {classDetails.assignments.map((assignment, id) => {
+                {classDetails && classDetails.assignments && classDetails.assignments.map((assignment, id) => {
                     return (
                         <ListItem key={id}>
-                            <ListItemText 
-                              primary={assignment} 
-                            />
+                            <ListItemText primary={assignment} />
                         </ListItem>
                         )
                 })}
@@ -174,6 +186,7 @@ export default function Class() {
             </Grid>
 
             </Card>
+          </Grid>
           </Grid>
         </Container>
 
