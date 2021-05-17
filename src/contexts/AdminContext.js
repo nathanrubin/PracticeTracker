@@ -113,7 +113,8 @@ export function AdminProvider({ children }) {
                 first: doc.data().first,
                 last: doc.data().last,
                 myStickers: doc.data().myStickers,
-                teacherStickers: doc.data().teacherStickers
+                teacherStickers: doc.data().teacherStickers,
+                weekdaysComplete: doc.data().weekdaysComplete
             }
             students.push(student);
             setClassStudents(students);

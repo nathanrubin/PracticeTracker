@@ -5,6 +5,13 @@ import { useAuth } from "../../contexts/AuthContext"
 import { useAdmin } from "../../contexts/AdminContext"
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
+import { wagner } from '../../theme';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,46 +21,54 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowBack from '@material-ui/icons/ArrowBack'
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import Star from '@material-ui/icons/Star';
+import StarBorder from '@material-ui/icons/StarBorder';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Add from '@material-ui/icons/Add';
+
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { CardContent } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    justifyContent: "center",
   },
   rootAssignments: {
     backgroundColor: theme.palette.background.paper
   },
-  teacherList: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
+  table: {
+    padding: theme.spacing(2, 0)
   },
-  toolbar: {
-    paddingRight: 0, // keep right padding when drawer closed
+  header: {
+    width: '6rem',
+    padding: theme.spacing(1, 0)
   },
-  drawerTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: 0,
-    marginLeft: 16
+  cell: {
+    width: '6rem',
+    padding: theme.spacing(1, 0)
   },
-  drawerTitleIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 0',
-    ...theme.mixins.toolbar,
+  row: {
+    height: 20
+  },
+  headerAssignments: {
+    padding: 0
+  },
+  assignmentTitle: {
+    textTransform: 'uppercase',
+    fontWeight: 500,
+    padding: '10px 10px 0 10px'
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -61,18 +76,6 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-  },
-  menuButton: {
-    marginRight: 0,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  list: {
-    width: 400
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -82,35 +85,7 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     padding: theme.spacing(1)
-  },
-  paper: {
-    padding: theme.spacing(1),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  addStudent: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-  headerAssignments: {
-  },
-  assignmentTitle: {
-    textTransform: 'uppercase',
-    fontWeight: 300
-  },
+  }
 }));
 
 
@@ -125,6 +100,13 @@ export default function Class() {
 
   function goBack() {
     selectClass('')
+  }
+  function renderStudent(student, col) {
+    if (col==8) {
+      return student.weekdaysComplete.length >= 5 ? <Star color="secondary" fontSize="small" /> : '';
+    } else {
+      return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
+    }
   }
 
   return (
@@ -147,49 +129,63 @@ export default function Class() {
       
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-
         <Container maxWidth="lg" className={classes.container}>
-          {error && <Alert severity="error">{error}</Alert>}
-          <Grid container spacing={0}>
+
+        <Grid container spacing={1}>
+
+          {/* Weekly */}
           <Grid item xs={12}>
-
-          <Card className={classes.rootAssignments}>
-            <CardHeader className={classes.headerAssignments}
-                title={<div className={classes.assignmentTitle}>Weekly Assignments</div>}
-            />
-
-                <div className={classes.teacherList}>
-                {classStudents && classStudents.map((student, id) => {
-                    return (
-                        <ListItem key={id}>
-                            <ListItemText 
-                              primary={student.first} 
-                            />
-                        </ListItem>
-                        )
-                })}
-
-                </div>
-            
-            <Grid item xs={12}>
-                <div className={classes.teacherList}>
-                {classDetails && classDetails.assignments && classDetails.assignments.map((assignment, id) => {
-                    return (
-                        <ListItem key={id}>
-                            <ListItemText primary={assignment} />
-                        </ListItem>
-                        )
-                })}
-
-                </div>
-            
-            </Grid>
-
+            <Card className={classes.root}>
+              <Table className={classes.row}>
+                <TableHead>
+                  <TableRow>
+                    {['Student', '1', '2', '3', '4', '5', '6', '7', <StarBorder fontSize="small" style={{ marginTop: '4' }} />].map((col) => (
+                      <TableCell key={col} align='center' className={classes.header}>{col}</TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {classStudents.map((student, id) => (
+                    <TableRow className={classes.row} key={id}>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col) => (
+                        <TableCell key={col} align='center' className={classes.cell}>
+                          {renderStudent(student, col)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </Card>
           </Grid>
-          </Grid>
-        </Container>
 
+          <Grid item xs={12}>
+
+            <Card className={classes.rootAssignments}>
+              <Typography className={classes.assignmentTitle} color="secondary">Weekly Assignments</Typography>
+              <Grid item xs={12}>
+                <List dense>
+                    {classDetails && classDetails.assignments && classDetails.assignments.map((assignment, id) => {
+                      return (<React.Fragment><Divider  />
+                          <ListItem key={id} style={{paddingTop: 0, paddingBottom: 0}}>
+                              <ListItemText primary={assignment} />
+                              <IconButton edge="end" aria-label="delete" style={{padding: '5px'}}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                          </ListItem>
+                          </React.Fragment>
+                    )})}
+                    <Divider  />
+                    <IconButton aria-label="add assignment" style={{padding: '5px', margin: '5px'}}>
+                      <Add color='secondary'/>
+                    </IconButton>
+                </List>
+              </Grid>
+            </Card>
+
+          </Grid>
+      </Grid>
+      </Container>
       </main>
     </div>
   );

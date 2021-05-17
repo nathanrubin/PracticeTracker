@@ -139,7 +139,7 @@ export default function Admin() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
 
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth={false} className={classes.container}>
           {error && <Alert severity="error">{error}</Alert>}
           <Grid container spacing={0}>
           <Card className={classes.list}>
