@@ -4,7 +4,6 @@ import { auth, firestore } from "../firebase"
 const AuthContext = React.createContext()
 
 export function useAuth() {
-  console.log("useAuth")
   return useContext(AuthContext)
 }
 

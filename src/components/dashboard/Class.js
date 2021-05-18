@@ -40,6 +40,13 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { CardContent } from '@material-ui/core';
 
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import TextField from '@material-ui/core/TextField';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -49,15 +56,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper
   },
   table: {
-    padding: theme.spacing(2, 0)
+    padding: theme.spacing(2, 0),
   },
   header: {
     width: '6rem',
-    padding: theme.spacing(1, 0)
+    padding: theme.spacing(1, 0),
+    textAlign: 'right'
   },
   cell: {
     width: '6rem',
-    padding: theme.spacing(1, 0)
+    padding: theme.spacing(1, 0),
+    textAlign: 'right'
   },
   row: {
     height: 20
@@ -85,6 +94,12 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     padding: theme.spacing(1)
+  },
+  addAssignment: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
   }
 }));
 
@@ -95,19 +110,41 @@ export default function Class() {
   let history = useHistory();
 
   const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents } = useAdmin()
-  const [error, setError] = useState("")
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, removeAssignmentIndex, saveAssignment } = useAdmin()
+  const [assignmentError, setAssignmentError] = useState("")
+  const assignmentRef = useRef()
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [isEnabled, setIsEnabled] = React.useState(false);
 
   function goBack() {
     selectClass('')
   }
   function renderStudent(student, col) {
     if (col==8) {
-      return student.weekdaysComplete.length >= 5 ? <Star color="secondary" fontSize="small" /> : '';
+      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '5px', marginRight: '5px'}} key={col} ><Star color="secondary" fontSize="small" /></IconButton> : '';
     } else {
       return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
     }
   }
+
+  const addAssignmentOpen = () => {
+    console.log("opening adding assignment")
+    setOpenDialog(true);
+  }
+  const addAssignmentClose = () => {
+    console.log("class add assignment")
+    setOpenDialog(false);
+  }
+  const saveNewAssignment = () => {
+    console.log("saving assignment: " + assignmentRef.current.value);
+    setOpenDialog(false);
+    saveAssignment(assignmentRef.current.value)
+  }
+  
+  const handleValidation = () => {
+    setAssignmentError(assignmentRef.current.value ? "" : "Assignment can't be empty.");
+    setIsEnabled(assignmentRef.current.value);
+  };
 
   return (
     <div className={classes.root}>
@@ -139,7 +176,7 @@ export default function Class() {
               <Table className={classes.row}>
                 <TableHead>
                   <TableRow>
-                    {['Student', '1', '2', '3', '4', '5', '6', '7', <StarBorder fontSize="small" style={{ marginTop: '4' }} />].map((col) => (
+                    {['Student', '1', '2', '3', '4', '5', '6', '7', <StarBorder fontSize="small" style={{ marginTop: '4', marginRight: '10' }} />].map((col) => (
                       <TableCell key={col} align='center' className={classes.header}>{col}</TableCell>
                     ))}
                   </TableRow>
@@ -166,17 +203,17 @@ export default function Class() {
               <Grid item xs={12}>
                 <List dense>
                     {classDetails && classDetails.assignments && classDetails.assignments.map((assignment, id) => {
-                      return (<React.Fragment><Divider  />
+                      return (<React.Fragment key={id}><Divider  />
                           <ListItem key={id} style={{paddingTop: 0, paddingBottom: 0}}>
                               <ListItemText primary={assignment} />
-                              <IconButton edge="end" aria-label="delete" style={{padding: '5px'}}>
+                              <IconButton edge="end" aria-label="delete" style={{padding: '5px'}} onClick={() => removeAssignmentIndex(id)}>
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
                           </ListItem>
                           </React.Fragment>
                     )})}
                     <Divider  />
-                    <IconButton aria-label="add assignment" style={{padding: '5px', margin: '5px'}}>
+                    <IconButton aria-label="add assignment" style={{padding: '5px', margin: '5px'}} onClick={() => addAssignmentOpen()}>
                       <Add color='secondary'/>
                     </IconButton>
                 </List>
@@ -186,6 +223,20 @@ export default function Class() {
           </Grid>
       </Grid>
       </Container>
+
+      <Dialog onClose={addAssignmentClose} aria-labelledby="add-assignment" open={openDialog}>
+          <DialogTitle>Add Assignment</DialogTitle>
+          <DialogContent>
+            <form className={classes.addAssignment} autoComplete="off">
+              <TextField autoFocus id="assignment" label="Assignment" error={assignmentError.length>0} helperText={assignmentError} inputRef={assignmentRef} onChange={handleValidation}/>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => saveNewAssignment()} color="primary" disabled={!isEnabled}>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </main>
     </div>
   );
