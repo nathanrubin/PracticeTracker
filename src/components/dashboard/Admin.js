@@ -109,7 +109,6 @@ export default function Admin() {
   async function handleLogout() {
     try {
       await logout()
-      console.log("logout history push.")
       history.go("/")
     } catch {
       console.log("failed to log out")
@@ -118,7 +117,6 @@ export default function Admin() {
 
   async function handleLoadTeacher(teacher) {
     try {
-      console.log("load teachers page for: " + teacher.name)
       selectTeacher(teacher);
     } catch {
       console.log("failed to load teacher")

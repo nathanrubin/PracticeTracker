@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useHistory } from "react-router-dom";
 
-import { useAuth } from "../../contexts/AuthContext"
 import { useAdmin } from "../../contexts/AdminContext"
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
@@ -107,10 +105,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Class() {
   const classes = useStyles();
-  let history = useHistory();
-
-  const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, removeAssignmentIndex, saveAssignment } = useAdmin()
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, updateAssignments } = useAdmin()
+  const [assignments, setAssignments] = useState(classDetails.assignments)
   const [assignmentError, setAssignmentError] = useState("")
   const assignmentRef = useRef()
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -121,10 +117,17 @@ export default function Class() {
   }
   function renderStudent(student, col) {
     if (col==8) {
-      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '5px', marginRight: '5px'}} key={col} ><Star color="secondary" fontSize="small" /></IconButton> : '';
+      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '8px'}} key={col} ><Star color="secondary" fontSize="small" /></IconButton> : '';
     } else {
       return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
     }
+  }
+
+  function removeAssignment(id) {
+    var tmp = [...assignments];
+    tmp.splice(id, 1);
+    setAssignments(tmp);
+    updateAssignments(tmp);
   }
 
   const addAssignmentOpen = () => {
@@ -136,11 +139,13 @@ export default function Class() {
     setOpenDialog(false);
   }
   const saveNewAssignment = () => {
-    console.log("saving assignment: " + assignmentRef.current.value);
+    var tmp = [...assignments];
+    tmp.push(assignmentRef.current.value);
+    setAssignments(tmp);
+    updateAssignments(tmp);
     setOpenDialog(false);
-    saveAssignment(assignmentRef.current.value)
   }
-  
+
   const handleValidation = () => {
     setAssignmentError(assignmentRef.current.value ? "" : "Assignment can't be empty.");
     setIsEnabled(assignmentRef.current.value);
@@ -202,11 +207,11 @@ export default function Class() {
               <Typography className={classes.assignmentTitle} color="secondary">Weekly Assignments</Typography>
               <Grid item xs={12}>
                 <List dense>
-                    {classDetails && classDetails.assignments && classDetails.assignments.map((assignment, id) => {
+                    {assignments && assignments.map((assignment, id) => {
                       return (<React.Fragment key={id}><Divider  />
                           <ListItem key={id} style={{paddingTop: 0, paddingBottom: 0}}>
                               <ListItemText primary={assignment} />
-                              <IconButton edge="end" aria-label="delete" style={{padding: '5px'}} onClick={() => removeAssignmentIndex(id)}>
+                              <IconButton edge="end" aria-label="delete" style={{padding: '8px', marginRight: '-16px'}} onClick={() => removeAssignment(id)}>
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
                           </ListItem>

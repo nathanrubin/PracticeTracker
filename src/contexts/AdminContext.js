@@ -16,7 +16,6 @@ export function AdminProvider({ children }) {
   const [teachers, setTeachers] = useState([])
   const [selectedTeacher, setSelectedTeacher] = useState('')
   const [selectedClass, setSelectedClass] = useState('')
-
   const [classDetails, setClassDetails] = useState({})
   const [classStudents, setClassStudents] = useState([])
 
@@ -86,25 +85,6 @@ export function AdminProvider({ children }) {
   function loadClassDetails(teacher, classDateTime) {
     var details = teacher.classes.filter(c => c.class == classDateTime)[0];
     setClassDetails(details);
-
-    // firestore.collection("classes").where("teacher", "==", teacher).where("class", "==", classDateTime).limit(1)
-    // .get()
-    // .then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => {
-    //         const details = {
-    //             id: doc.id,
-    //             email: doc.data().email,
-    //             class: doc.data().class,
-    //             teacher: doc.data().teacher,
-    //             assignments: doc.data().assignments ? doc.data().assignments : [],
-    //         }
-    //         setClassDetails(details);
-    //         return details
-    //     });
-    //     }).catch((error) => {
-    //         console.log("Error getting class details:", error);
-    //         return ''
-    //     })
   }
 
   async function loadClassStudents(teacher, classDateTime) {
@@ -133,16 +113,13 @@ export function AdminProvider({ children }) {
   }
 
   function getClassDays(teacher) {
-    console.log(teacher)
     const days = teacher.classes.map(c => c.class.trim().split(" ")[0].toLowerCase()) // ["fri 4:00p", "mon 3:15p"] => ["fri", "mon"]
     var uniqueDays = Array.from(new Set(days));
     let sorted = uniqueDays.sort((a, b) => moment(a, 'ddd').weekday() - moment(b, 'ddd').weekday() );
-    console.log(sorted)
     return sorted
   }
  
   function getClassTimes(teacher, day) {
-    console.log("1")
    var times = teacher.classes.filter(c => c.class.includes(day)).map(c => c.class.trim().split(" ")[1].toLowerCase()); // ["mon 4:00p", "mon 3:15p"] => ["3:15p", "4:00p"]
    times.sort((a, b) => moment(a,'h:mma') - moment(b,'h:mma'));
    return times
@@ -152,27 +129,12 @@ export function AdminProvider({ children }) {
     return moment(short, 'ddd').format('dddd').toUpperCase()
   }
 
-  function removeAssignmentIndex(assignmentIdex) {
-    classDetails.assignments.splice(assignmentIdex, 1);
-    setClassDetails(classDetails);
-    firestore.collection("classes").doc(classDetails.id).update( {
-      assignments: classDetails.assignments
-  });
-  }
-
-  function saveAssignment(assignment) {
-    if (!classDetails.assignments) {
-      classDetails.assignments = [];
-    }
-    classDetails.assignments.push(assignment);
+  function updateAssignments(assignments) {
+    classDetails.assignments = assignments;
     setClassDetails(classDetails);
     firestore.collection("classes").doc(classDetails.id).update( {
         assignments: classDetails.assignments
     });
-  }
-
-  function today() {
-    return moment().isoWeekday() % 7
   }
 
   const value = {
@@ -186,8 +148,7 @@ export function AdminProvider({ children }) {
     getClassDays,
     getClassTimes,
     getLongDay,
-    removeAssignmentIndex,
-    saveAssignment
+    updateAssignments
   }
 
   return (

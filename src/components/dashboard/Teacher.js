@@ -36,32 +36,12 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     paddingRight: 0, // keep right padding when drawer closed
   },
-  drawerTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: 0,
-    marginLeft: 16
-  },
-  drawerTitleIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 0',
-    ...theme.mixins.toolbar,
-  },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-  },
-  menuButton: {
-    marginRight: 0,
-  },
-  menuButtonHidden: {
-    display: 'none',
   },
   title: {
     flexGrow: 1,
@@ -102,16 +82,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function ListItemLink(props) {
-    return <ListItem button component="a" {...props} />;
-}
-
 export default function Teacher() {
   const classes = useStyles();
   let history = useHistory();
 
-  const { logout, isAdmin, setIsTeacher, name } = useAuth()
-  const { teachers, selectedTeacher, selectTeacher, selectClass, getClassDays, getClassTimes, getLongDay } = useAdmin()
+  const { logout, isAdmin } = useAuth()
+  const { selectedTeacher, selectTeacher, selectClass, getClassDays, getClassTimes, getLongDay } = useAdmin()
   const [error, setError] = useState("")
 
   function adminBack() {
@@ -143,7 +119,6 @@ export default function Teacher() {
 
   function renderClassTimes(day) {
     const times = getClassTimes(selectedTeacher, day)
-    console.log(times)
     return (<React.Fragment>
         {times.map((time, id) => {
           return(<Button color={id % 2 == 0?"inherit": "primary"} style={{textTransform: 'none'}} key={id} onClick={() => selectClass(day + " " + time)}>{time}</Button>)
