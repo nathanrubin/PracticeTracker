@@ -23,6 +23,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from '@material-ui/icons/Star';
+import Check from '@material-ui/icons/Check';
 import StarBorder from '@material-ui/icons/StarBorder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Add from '@material-ui/icons/Add';
@@ -34,6 +35,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { CardContent } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -41,6 +43,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
+import {getTeacherStickers} from '../../stickers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -108,11 +111,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Class() {
   const classes = useStyles();
-  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, getLongClassDate, updateAssignments } = useAdmin()
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, getLongClassDate, updateAssignments, addTeacherSticker, checkStickerSentToday } = useAdmin()
   const [assignments, setAssignments] = useState(classDetails.assignments)
   const [assignmentError, setAssignmentError] = useState("")
   const assignmentRef = useRef()
   const [openDialog, setOpenDialog] = React.useState(false);
+  const [stickerDialog, setStickerDialog] = React.useState(false);
+  const [selectedStudent, setSelectedStudent] = React.useState("");
   const [isEnabled, setIsEnabled] = React.useState(false);
 
   function goBack() {
@@ -120,7 +125,11 @@ export default function Class() {
   }
   function renderStudent(student, col) {
     if (col==8) {
-      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '8px'}} key={col} ><Star color="primary" fontSize="small" /></IconButton> : '';
+      return student.weekdaysComplete.length >= 5 ? 
+        checkStickerSentToday(student) ? 
+          <Check fontSize="small" style={{ color: wagner.green, margin: '8px' }} /> 
+          : <IconButton style={{padding: '8px'}} key={col} onClick={() => openStickerDialog(student)}><Star color="primary" fontSize="small" /></IconButton> 
+        : '';
     } else {
       return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
     }
@@ -153,6 +162,20 @@ export default function Class() {
     setAssignmentError(assignmentRef.current.value ? "" : "Assignment can't be empty.");
     setIsEnabled(assignmentRef.current.value);
   };
+
+  const openStickerDialog = (student) => {
+    setSelectedStudent(student);
+    setStickerDialog(true);
+  };
+  const closeStickerDialog = () => {
+    setSelectedStudent("");
+    setStickerDialog(false);
+  };
+
+  const handleAddSticker = (sticker) => {
+    addTeacherSticker(selectedStudent, sticker);
+    setStickerDialog(false);
+}
 
   return (
     <div className={classes.root}>
@@ -245,8 +268,22 @@ export default function Class() {
               Save
             </Button>
           </DialogActions>
-        </Dialog>
-      </main>
-    </div>
+      </Dialog>
+
+      <Dialog onClose={closeStickerDialog} aria-labelledby="teacher-sticker-select" open={stickerDialog}>
+        <DialogContent style={{padding: '8px'}}>
+          <DialogContentText onClose={closeStickerDialog} style={{paddingLeft: '4px'}}>
+            Sticker Selection
+          </DialogContentText>
+          
+          {getTeacherStickers().map((tile) => (
+              <IconButton aria-label={`${tile.title}`} onClick={() => handleAddSticker(tile.title)} key={tile.img} style={{padding: '4px'}}>
+                  <Avatar src={tile.img} style={{borderRadius: 0, width: 50, height: 50}} />
+              </IconButton>
+          ))}
+        </DialogContent>
+      </Dialog>
+    </main>
+  </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react"
 import { firestore } from "../firebase"
 import { useAuth } from "./AuthContext"
 import moment from 'moment';
-import {availablePacks, getStickers} from '../stickers';
+import {availablePacks, getStickers, stickers} from '../stickers';
 
 const AdminContext = React.createContext()
 
@@ -142,6 +142,30 @@ export function AdminProvider({ children }) {
     });
   }
 
+  function addTeacherSticker(student, sticker) {
+    const studentId = student.id;
+    const day = moment().format('MMM DD');
+    const daySticker = day + "/" + sticker;
+    student.teacherStickers = union(student.teacherStickers, [daySticker]);
+    firestore.collection("students").doc(studentId).update( {
+      teacherStickers: student.teacherStickers
+     });
+  }
+
+  function checkStickerSentToday(student) {
+    const day = moment().format('MMM DD');
+    const foundAny = student.teacherStickers.filter(s => s.includes(day))
+    return foundAny.length > 0;
+  }
+
+  function not(a, b) {
+    return a.filter((value) => b.indexOf(value) === -1);
+  }
+
+  function union(a, b) {
+    return [...a, ...not(b, a)];
+  }
+
   const value = {
     teachers,
     selectedTeacher,
@@ -154,7 +178,9 @@ export function AdminProvider({ children }) {
     getClassTimes,
     getLongDay,
     getLongClassDate,
-    updateAssignments
+    updateAssignments,
+    addTeacherSticker,
+    checkStickerSentToday
   }
 
   return (

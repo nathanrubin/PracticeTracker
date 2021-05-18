@@ -9,6 +9,10 @@ export function getStickers(datePack) {
   return  myStickers.length ? myStickers : stickers.filter(s => s.title.includes(availablePacks[0]));
 }
 
+export function getTeacherStickers() {
+  return stickers.filter(s => s.title.includes('Teacher'))
+}
+
 export const stickers = [
     {img: require("/stickers/Animal1/Animal1-Bat.png"), title: 'Animal1-Bat',},
     {img: require("/stickers/Animal1/Animal1-Dog.png"), title: 'Animal1-Dog',},
