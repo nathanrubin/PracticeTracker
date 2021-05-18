@@ -17,12 +17,9 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
-import ChevronRight from '@material-ui/icons/ChevronRight'
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from '@material-ui/icons/Star';
@@ -53,17 +50,25 @@ const useStyles = makeStyles((theme) => ({
   rootAssignments: {
     backgroundColor: theme.palette.background.paper
   },
+  title: {
+    flexGrow: 1
+  },
+  classDate: {
+    fontWeight: 500,
+    fontSize: 16,
+    paddingTop: 2
+  },
   table: {
     padding: theme.spacing(2, 0),
   },
-  header: {
-    width: '6rem',
-    padding: theme.spacing(1, 0),
-    textAlign: 'right'
+  cellStudent: {
+    width: '12rem',
+    textTransform: 'capitalize',
+    padding: theme.spacing(1, 0)
   },
   cell: {
     width: '6rem',
-    padding: theme.spacing(1, 0),
+    padding: 0,
     textAlign: 'right'
   },
   row: {
@@ -101,11 +106,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
-
 export default function Class() {
   const classes = useStyles();
-  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, updateAssignments } = useAdmin()
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, getLongClassDate, updateAssignments } = useAdmin()
   const [assignments, setAssignments] = useState(classDetails.assignments)
   const [assignmentError, setAssignmentError] = useState("")
   const assignmentRef = useRef()
@@ -117,7 +120,7 @@ export default function Class() {
   }
   function renderStudent(student, col) {
     if (col==8) {
-      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '8px'}} key={col} ><Star color="secondary" fontSize="small" /></IconButton> : '';
+      return student.weekdaysComplete.length >= 5 ? <IconButton style={{padding: '8px'}} key={col} ><Star color="primary" fontSize="small" /></IconButton> : '';
     } else {
       return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
     }
@@ -163,9 +166,10 @@ export default function Class() {
             >
             <ArrowBack />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} onClick={() => window.location.reload(false)}>
-            {selectedTeacher && selectedTeacher.name} - {selectedClass}
+          <Typography component="h1" variant="h6" color="inherit" className={classes.title} noWrap onClick={() => window.location.reload(false)}>
+            {selectedTeacher && selectedTeacher.name}
           </Typography>
+          <Typography className={classes.classDate} color="secondary">{getLongClassDate(selectedClass)}</Typography>
         </Toolbar>
       </AppBar>
       
@@ -181,16 +185,16 @@ export default function Class() {
               <Table className={classes.row}>
                 <TableHead>
                   <TableRow>
-                    {['Student', '1', '2', '3', '4', '5', '6', '7', <StarBorder fontSize="small" style={{ marginTop: '4', marginRight: '10' }} />].map((col) => (
-                      <TableCell key={col} align='center' className={classes.header}>{col}</TableCell>
+                    {['Student', '1', '2', '3', '4', '5', '6', '7', <StarBorder fontSize="small" style={{ marginTop: '4', marginRight: '10' }} />].map((col, id) => (
+                      <TableCell key={id} align='center' className={id == 0 ? classes.cellStudent : classes.cell}>{col}</TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {classStudents.map((student, id) => (
                     <TableRow className={classes.row} key={id}>
-                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col) => (
-                        <TableCell key={col} align='center' className={classes.cell}>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col, id) => (
+                        <TableCell key={id} align='center' className={id == 0 ? classes.cellStudent : classes.cell}>
                           {renderStudent(student, col)}
                         </TableCell>
                       ))}
@@ -219,7 +223,7 @@ export default function Class() {
                     )})}
                     <Divider  />
                     <IconButton aria-label="add assignment" style={{padding: '5px', margin: '5px'}} onClick={() => addAssignmentOpen()}>
-                      <Add color='secondary'/>
+                      <Add color='primary'/>
                     </IconButton>
                 </List>
               </Grid>

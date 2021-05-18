@@ -129,6 +129,11 @@ export function AdminProvider({ children }) {
     return moment(short, 'ddd').format('dddd').toUpperCase()
   }
 
+  function getLongClassDate(short) {
+    const splitDate = short.trim().split(" ");
+    return getLongDay(splitDate[0]) + " " + splitDate[1];
+  }
+
   function updateAssignments(assignments) {
     classDetails.assignments = assignments;
     setClassDetails(classDetails);
@@ -148,6 +153,7 @@ export function AdminProvider({ children }) {
     getClassDays,
     getClassTimes,
     getLongDay,
+    getLongClassDate,
     updateAssignments
   }
 
