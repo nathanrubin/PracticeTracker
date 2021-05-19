@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 
 import { useAdmin } from "../../contexts/AdminContext"
 import { makeStyles } from '@material-ui/core/styles';
-import Alert from '@material-ui/lab/Alert';
 import { wagner } from '../../theme';
 
 import Table from '@material-ui/core/Table';
@@ -19,23 +18,22 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from '@material-ui/icons/Star';
 import Check from '@material-ui/icons/Check';
 import StarBorder from '@material-ui/icons/StarBorder';
+import EmojiEvents from '@material-ui/icons/EmojiEvents';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Add from '@material-ui/icons/Add';
 
-import Grid from '@material-ui/core/Grid';
+import Grid from '@material-ui/core/Grid'
+import Avatar from '@material-ui/core/Avatar';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { CardContent } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -43,7 +41,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-import {getTeacherStickers} from '../../stickers';
+import {getTeacherStickers, getTeacherStickersForStudent} from '../../stickers';
+import { visibleColumnsLengthSelector } from '@material-ui/data-grid';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +67,11 @@ const useStyles = makeStyles((theme) => ({
     width: '12rem',
     textTransform: 'capitalize',
     padding: theme.spacing(1, 0)
+  },
+  cellStudentAward: {
+    width: '12rem',
+    textTransform: 'capitalize',
+    padding: 0
   },
   cell: {
     width: '6rem',
@@ -106,32 +110,61 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
       width: '25ch',
     },
-  }
+  },
+  award: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  awardAvatar: {
+    maxWidth: 18,
+    maxHeight: 18
+  },
 }));
 
 export default function Class() {
   const classes = useStyles();
-  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, getLongClassDate, updateAssignments, addTeacherSticker, checkStickerSentToday } = useAdmin()
+  const { selectedTeacher, selectClass, selectedClass, classDetails, classStudents, getLongClassDate, updateAssignments, addTeacherSticker, checkStickerSentToday, sendCandy } = useAdmin()
   const [assignments, setAssignments] = useState(classDetails.assignments)
   const [assignmentError, setAssignmentError] = useState("")
   const assignmentRef = useRef()
   const [openDialog, setOpenDialog] = React.useState(false);
   const [stickerDialog, setStickerDialog] = React.useState(false);
+  const [awardDialog, setAwardDialog] = React.useState(false);
   const [selectedStudent, setSelectedStudent] = React.useState("");
   const [isEnabled, setIsEnabled] = React.useState(false);
 
   function goBack() {
     selectClass('')
   }
+
+  function renderTeacherStickers(student) {
+    return (
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        {student.teacherStickers.length>=4? <IconButton style={{padding: '8px'}} onClick={() => openAwardDialog(student)}><EmojiEvents color="primary" fontSize="small" /></IconButton> : ''}
+        <div>
+          {student.first + " " + student.last.charAt(0) + "."}
+          <div className={classes.award}>
+            {getTeacherStickersForStudent(student).map((s, id) => (
+                  <Avatar key={id} src={s} className={classes.awardAvatar} />
+            ))}
+          </div>
+      </div>
+    </div>
+    )
+  }
+
   function renderStudent(student, col) {
-    if (col==8) {
+    if (col==0) {
+      return renderTeacherStickers(student);
+    }
+    else if (col==8) {
       return student.weekdaysComplete.length >= 5 ? 
         checkStickerSentToday(student) ? 
           <Check fontSize="small" style={{ color: wagner.green, margin: '8px' }} /> 
-          : <IconButton style={{padding: '8px'}} key={col} onClick={() => openStickerDialog(student)}><Star color="primary" fontSize="small" /></IconButton> 
+          : <IconButton style={{padding: '8px'}} key={col} onClick={() => openStickerDialog(student)}><Star color="primary" fontSize="small" /></IconButton>
         : '';
     } else {
-      return col==0 ? student.first + " " + student.last.charAt(0) + "." : student.weekdaysComplete.length >= col? 'X' : '';
+      return student.weekdaysComplete.length >= col? 'X' : '';
     }
   }
 
@@ -175,7 +208,21 @@ export default function Class() {
   const handleAddSticker = (sticker) => {
     addTeacherSticker(selectedStudent, sticker);
     setStickerDialog(false);
-}
+  };
+
+  const openAwardDialog = (student) => {
+    setSelectedStudent(student);
+    setAwardDialog(true);
+  };
+  const closeAwardDialog = () => {
+    setSelectedStudent("");
+    setAwardDialog(false);
+  };
+  function sendCandyAward() {
+    console.log("sending candy!");
+    sendCandy(selectedStudent);
+    closeAwardDialog();
+  }
 
   return (
     <div className={classes.root}>
@@ -217,7 +264,7 @@ export default function Class() {
                   {classStudents.map((student, id) => (
                     <TableRow className={classes.row} key={id}>
                       {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col, id) => (
-                        <TableCell key={id} align='center' className={id == 0 ? classes.cellStudent : classes.cell}>
+                        <TableCell key={id} align='center' className={id == 0 ? student.teacherStickers.length>0? classes.cellStudentAward : classes.cellStudent : classes.cell}>
                           {renderStudent(student, col)}
                         </TableCell>
                       ))}
@@ -281,6 +328,24 @@ export default function Class() {
                   <Avatar src={tile.img} style={{borderRadius: 0, width: 50, height: 50}} />
               </IconButton>
           ))}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog onClose={closeAwardDialog} aria-labelledby="teacher-award-select" open={awardDialog}>
+        <DialogTitle>CANDY AWARD</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText onClose={closeAwardDialog}>
+            {selectedStudent.first} {selectedStudent.last} has earned a candy!
+          </DialogContentText>
+          <DialogActions>
+            <Button onClick={() => sendCandyAward()} color="primary" >
+              Send
+            </Button>
+            <Button onClick={() => closeAwardDialog()} color="inherit">
+              Cancel
+            </Button>
+          </DialogActions>
         </DialogContent>
       </Dialog>
     </main>

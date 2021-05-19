@@ -13,6 +13,10 @@ export function getTeacherStickers() {
   return stickers.filter(s => s.title.includes('Teacher'))
 }
 
+export function getTeacherStickersForStudent(student) {
+  return student.teacherStickers.map(s => getImgByTitle(s.split('/')[1]));
+}
+
 export const stickers = [
     {img: require("/stickers/Animal1/Animal1-Bat.png"), title: 'Animal1-Bat',},
     {img: require("/stickers/Animal1/Animal1-Dog.png"), title: 'Animal1-Dog',},

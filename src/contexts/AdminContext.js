@@ -101,7 +101,8 @@ export function AdminProvider({ children }) {
                 last: doc.data().last,
                 myStickers: doc.data().myStickers ? doc.data().myStickers : [],
                 teacherStickers: doc.data().teacherStickers,
-                weekdaysComplete: doc.data().weekdaysComplete
+                weekdaysComplete: doc.data().weekdaysComplete,
+                stickerWall: doc.data().stickerWall ? doc.data().stickerWall : []
             }
             students.push(student);
             setClassStudents(students);
@@ -152,6 +153,16 @@ export function AdminProvider({ children }) {
      });
   }
 
+  function sendCandy(student) {
+    // transfers teacher stickers to a students sticker wall
+    student.stickerWall = union(student.stickerWall, student.teacherStickers);
+    student.teacherStickers = [];
+    firestore.collection("students").doc(student.id).update( {
+      stickerWall: student.stickerWall,
+      teacherStickers: student.teacherStickers
+     });
+  }
+
   function checkStickerSentToday(student) {
     const day = moment().format('MMM DD');
     const foundAny = student.teacherStickers.filter(s => s.includes(day))
@@ -180,7 +191,8 @@ export function AdminProvider({ children }) {
     getLongClassDate,
     updateAssignments,
     addTeacherSticker,
-    checkStickerSentToday
+    checkStickerSentToday,
+    sendCandy
   }
 
   return (
