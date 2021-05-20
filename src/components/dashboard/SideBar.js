@@ -144,17 +144,11 @@ export function SideBar ({student}) {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>Achievements: </Typography>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>Recent Achievements: </Typography>
         </Grid>
         <Grid item xs={12}>
           {renderAwards()}
-        </Grid> 
-        {/* <Grid item xs={4}>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>Version:</Typography>
         </Grid>
-        <Grid item xs={8}>
-          <Typography className={classes.title} color="secondary" gutterBottom>0.9.1.3</Typography>
-        </Grid> */}
       </Grid>
 
       <Accordion>
@@ -163,7 +157,7 @@ export function SideBar ({student}) {
           aria-controls="Sticker Hall of Fame"
           id="panel1a-header"
         >
-          <Typography className={classes.title} color="textSecondary" gutterBottom style={{marginLeft: -8}}>Sticker Hall of Fame:</Typography>
+          <Typography className={classes.title} color="textSecondary" gutterBottom style={{marginLeft: -8}}>Past Achievements:</Typography>
         </AccordionSummary>
         <AccordionDetails>
           {renderWallofFame()}
