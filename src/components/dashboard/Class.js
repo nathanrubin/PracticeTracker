@@ -144,7 +144,7 @@ export default function Class() {
         <div>
           {student.first + " " + student.last.charAt(0) + "."}
           <div className={classes.award}>
-            {getTeacherStickersForStudent(student).map((s, id) => (
+            {getTeacherStickersForStudent(student).slice(0, 5).map((s, id) => (
                   <Avatar key={id} src={s} className={classes.awardAvatar} />
             ))}
           </div>
