@@ -110,8 +110,10 @@ const useStyles = makeStyles((theme) => ({
     width: 350,
   },
   avatarSticker: {
-    width: 40,
-    height: 40
+    maxWidth: 40,
+    maxHeight: 40,
+    width: 'auto',
+    height: 'auto'
   },
   formControl: {
     margin: theme.spacing(1),
@@ -220,9 +222,9 @@ export default function Weekly() {
     const img = getImgByTitle(stickerName);
     var stickerEl = "";
     if (isDayInPast(day) && img === undefined) {
-      stickerEl = <ClearIcon color='secondary' className={classes.avatarSticker} onClick={() => handleOpen(day)}/>
+      stickerEl = <IconButton style={{padding:8}} onClick={() => handleOpen(day)}><ClearIcon color='secondary' className={classes.avatarSticker} /></IconButton>
     } else if ((isDayInPast(day) || day === today()) && img !== undefined){
-      stickerEl = <Avatar src={img} className={classes.avatarSticker} onClick={() => handleOpen(day)} />
+      stickerEl = <IconButton style={{padding:8}} onClick={() => handleOpen(day)}><Avatar src={img} className={classes.avatarSticker}/></IconButton>
     } else {
       stickerEl = ""
     }
