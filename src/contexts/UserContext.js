@@ -47,6 +47,7 @@ export function UserProvider({ children }) {
               teacherStickers: doc.data().teacherStickers,
               weekdaysComplete: doc.data().weekdaysComplete,
               myStickers: doc.data().myStickers ? doc.data().myStickers : [],
+              stickerWall: doc.data().stickerWall ? doc.data().stickerWall : [],
               isNewWeek: false,
               isMissingPack: false
             }
@@ -215,6 +216,7 @@ export function UserProvider({ children }) {
         stickerPack: "",
         teacherStickers: [],
         weekdaysComplete: [],
+        stickerWall: [],
         myStickers: ["","","","","","",""]
     }
 

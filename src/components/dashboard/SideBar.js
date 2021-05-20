@@ -16,6 +16,10 @@ import Grid from '@material-ui/core/Grid'
 import Avatar from '@material-ui/core/Avatar';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import {getStickers, getImgByTitle} from '../../stickers';
 
@@ -75,7 +79,24 @@ export function SideBar ({student}) {
     }
   }
 
-
+  function renderWallofFame(){
+    if (student && student.stickerWall) {
+      return ( <div className={classes.root}>
+          <GridList cellHeight={'auto'} className={classes.gridList} cols={4}>
+            {student.stickerWall.map((s) => (
+              <GridListTile key={s.split('/')[1]}>
+                <div className={classes.award}>
+                  <Avatar key={s.split('/')[1]} src={getImgByTitle(s.split('/')[1])} className={classes.awardAvatar} />
+                  <Typography className={classes.content} color="primary" gutterBottom>{s.split('/')[0]}</Typography>
+                </div>
+              </GridListTile>
+            ))}
+          </GridList>
+        </div>)
+    } else {
+      return ""
+    }
+  }
 
   function renderAwards(){
     if (student && student.teacherStickers) {
@@ -136,7 +157,19 @@ export function SideBar ({student}) {
         </Grid> */}
       </Grid>
 
-      <Divider />
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="Sticker Hall of Fame"
+          id="panel1a-header"
+        >
+          <Typography className={classes.title} color="textSecondary" gutterBottom style={{marginLeft: -8}}>Sticker Hall of Fame:</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {renderWallofFame()}
+        </AccordionDetails>
+      </Accordion>
+
       <List dense>
         <ListItem button variant="link" onClick={handleLogout}>
           <ListItemIcon>
