@@ -131,7 +131,6 @@ export default function Class() {
   const [stickerDialog, setStickerDialog] = React.useState(false);
   const [awardDialog, setAwardDialog] = React.useState(false);
   const [selectedStudent, setSelectedStudent] = React.useState("");
-  const [isEnabled, setIsEnabled] = React.useState(false);
 
   function goBack() {
     selectClass('')
@@ -184,16 +183,19 @@ export default function Class() {
     setOpenDialog(false);
   }
   const saveNewAssignment = () => {
-    var tmp = [...assignments];
-    tmp.push(assignmentRef.current.value);
-    setAssignments(tmp);
-    updateAssignments(tmp);
-    setOpenDialog(false);
+    if (assignmentRef.current.value != "") {
+      var tmp = [...assignments];
+      tmp.push(assignmentRef.current.value);
+      setAssignments(tmp);
+      updateAssignments(tmp);
+      setOpenDialog(false);
+    } else {
+      handleValidation()
+    }
   }
 
   const handleValidation = () => {
     setAssignmentError(assignmentRef.current.value ? "" : "Assignment can't be empty.");
-    setIsEnabled(assignmentRef.current.value);
   };
 
   const openStickerDialog = (student) => {
@@ -307,11 +309,11 @@ export default function Class() {
           <DialogTitle>Add Assignment</DialogTitle>
           <DialogContent>
             <form className={classes.addAssignment} autoComplete="off">
-              <TextField autoFocus id="assignment" label="Assignment" error={assignmentError.length>0} helperText={assignmentError} inputRef={assignmentRef} onChange={handleValidation}/>
+              <TextField id="assignment" label="Assignment" error={assignmentError.length>0} helperText={assignmentError} inputRef={assignmentRef} onChange={handleValidation}/>
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => saveNewAssignment()} color="primary" disabled={!isEnabled}>
+            <Button onClick={() => saveNewAssignment()} color="primary">
               Save
             </Button>
           </DialogActions>

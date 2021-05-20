@@ -103,8 +103,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const classes = useStyles();
-  const { students, selectedStudent, selectStudent, assignments, saveStudent, teachers, getTeacherClassDays, getClassTimes } = useUser()
-  const [error, setError] = useState("")
+  const { students, selectedStudent, selectStudent, assignments, saveStudent, teachers, getTeacherClassDays, getClassTimes } = useUser();
+  const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -115,8 +115,8 @@ export default function Dashboard() {
   const [classTimes, setClassTimes] = React.useState([]);
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [firstError, setFirstError] = React.useState('');
-  const firstRef = useRef()
-  const lastRef = useRef()
+  const firstRef = useRef();
+  const lastRef = useRef();
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -126,8 +126,8 @@ export default function Dashboard() {
   };
 
   const switchStudent = (event, index) => {
-    selectStudent(index)
-    setAnchorEl(null)
+    selectStudent(index);
+    setAnchorEl(null);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -136,42 +136,49 @@ export default function Dashboard() {
     setAnchorEl(event.currentTarget);
   };
   const addStudentOpen = () => {
-    console.log("opening adding student")
+    console.log("opening adding student");
+    setIsEnabled(false);
     setOpenDialog(true);
   }
   const addStudentClose = () => {
-    console.log("class add student")
+    console.log("class add student");
+    setIsEnabled(false);
     setOpenDialog(false);
-    setAnchorEl(null)
+    setAnchorEl(null);
   }
   const saveNewStudent = () => {
-    console.log("saving student: " + firstRef.current.value + " " + lastRef.current.value + " " + selectedTeacher + " " + selectedClass + " " + selectedTime);
-    setOpenDialog(false);
-    setAnchorEl(null)
-    saveStudent(firstRef.current.value, lastRef.current.value, selectedTeacher, selectedClass, selectedTime)
+    if (isEnabled) {
+      console.log("saving student: " + firstRef.current.value + " " + lastRef.current.value + " " + selectedTeacher + " " + selectedClass + " " + selectedTime);
+      setOpenDialog(false);
+      setAnchorEl(null);
+      saveStudent(firstRef.current.value, lastRef.current.value, selectedTeacher, selectedClass, selectedTime);
+    } else {
+      setError("Please enter all fields.");
+    }
   }
   
   const handleTeacherChange = (event) => {
     setSelectedTeacher(event.target.value);
-    setTeacherClasses(getTeacherClassDays(event.target.value))
-    setSelectedClass('')
-    setSelectedTime('')
-    setIsEnabled(false)
+    setTeacherClasses(getTeacherClassDays(event.target.value));
+    setSelectedClass('');
+    setSelectedTime('');
+    setIsEnabled(false);
   };
   const handleClassChange = (event) => {
     setSelectedClass(event.target.value);
-    setClassTimes(getClassTimes(selectedTeacher, event.target.value))
-    setSelectedTime('')
-    setIsEnabled(false)
+    setClassTimes(getClassTimes(selectedTeacher, event.target.value));
+    setSelectedTime('');
+    setIsEnabled(false);
   };
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
-    setIsEnabled(!firstError && firstRef.current.value && lastRef.current.value)
+    setIsEnabled(!firstError && firstRef.current.value && lastRef.current.value);
   };
   const handleValidation = () => {
     const isValidFirst = !students.length || students.filter(s => s.first === firstRef.current.value).length == 0
-    setIsEnabled(isValidFirst && firstRef.current.value && lastRef.current.value && selectedTeacher && selectedClass && selectedTime);
+    setIsEnabled(isValidFirst && firstRef.current.value != "" && lastRef.current.value != "" && selectedTeacher && selectedClass && selectedTime);
     setFirstError(isValidFirst ? "" : "First name must be unique.");
+    setError("");
   };
 
   return (
@@ -244,8 +251,9 @@ export default function Dashboard() {
           <Dialog onClose={addStudentClose} aria-labelledby="add-student" open={openDialog || !students.length}>
           <DialogTitle>Add Student</DialogTitle>
           <DialogContent>
+            {error && <Typography color="secondary">{error}</Typography>}
             <form className={classes.addStudent} autoComplete="off">
-              <TextField autoFocus id="first-name" label="First name" error={firstError.length>0} helperText={firstError} inputRef={firstRef} onChange={handleValidation}/>
+              <TextField id="first-name" label="First name" error={firstError.length>0} helperText={firstError} inputRef={firstRef} onChange={handleValidation}/>
               <TextField id="last-name" label="Last name" inputRef={lastRef} onChange={handleValidation}/>
               <TextField id="teacher" label="Teacher" select value={selectedTeacher} onChange={handleTeacherChange}>
                 {teachers.map((option) => (
@@ -271,7 +279,7 @@ export default function Dashboard() {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => saveNewStudent()} color="primary" disabled={!isEnabled}>
+            <Button onClick={() => saveNewStudent()} color="primary">
               Save
             </Button>
           </DialogActions>

@@ -5,6 +5,9 @@ service cloud.firestore {
     match /students/{student} {
       allow read, write, create: if request.auth != null;
     }
+    match /classes/{student} {
+      allow read, write, create: if request.auth != null;
+    }
     match /{document=**} {
       allow read: if request.auth != null;
     }
