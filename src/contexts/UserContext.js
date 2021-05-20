@@ -186,6 +186,7 @@ export function UserProvider({ children }) {
     if (students[selectedStudent].isNewWeek) {
       students[selectedStudent].stickerPack = moment().format("YYYY MMM DD") + "/" + pack;
       students[selectedStudent].myStickers = emptyStickers;
+      students[selectedStudent].weekdaysComplete = [];
       students[selectedStudent].isNewWeek = false;
     } else {
       const originalPackDate = students[selectedStudent].stickerPack.split("/")[0];
@@ -200,7 +201,8 @@ export function UserProvider({ children }) {
 
     firestore.collection("students").doc(studentId).update( {
         stickerPack: students[selectedStudent].stickerPack,
-        myStickers: students[selectedStudent].myStickers
+        myStickers: students[selectedStudent].myStickers,
+        weekdaysComplete: students[selectedStudent].weekdaysComplete,
     });
   }
 
