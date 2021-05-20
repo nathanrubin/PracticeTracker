@@ -158,13 +158,13 @@ export default function Class() {
       return renderTeacherStickers(student);
     }
     else if (col==8) {
-      return student.weekdaysComplete.length >= 5 ? 
+      return student.myStickers.filter(s => s != "").length >= 5 ? 
         checkStickerSentToday(student) ? 
           <Check fontSize="small" style={{ color: wagner.green, margin: '8px' }} /> 
           : <IconButton style={{padding: '8px'}} key={col} onClick={() => openStickerDialog(student)}><Star color="primary" fontSize="small" /></IconButton>
         : '';
     } else {
-      return student.weekdaysComplete.length >= col? 'X' : '';
+      return student.myStickers.filter(s => s != "").length >= col? 'X' : '';
     }
   }
 
