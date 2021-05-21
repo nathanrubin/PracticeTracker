@@ -175,11 +175,11 @@ export default function Class() {
   }
 
   const addAssignmentOpen = () => {
-    console.log("opening adding assignment")
+    setAssignmentError("");
     setOpenDialog(true);
   }
   const addAssignmentClose = () => {
-    console.log("class add assignment")
+    setAssignmentError("");
     setOpenDialog(false);
   }
   const saveNewAssignment = () => {
@@ -306,7 +306,7 @@ export default function Class() {
       </Container>
 
       <Dialog onClose={addAssignmentClose} aria-labelledby="add-assignment" open={openDialog}>
-          <DialogTitle>Add Assignment</DialogTitle>
+          <DialogTitle style={{paddingBottom: 0}}>Add Assignment</DialogTitle>
           <DialogContent>
             <form className={classes.addAssignment} autoComplete="off">
               <TextField id="assignment" label="Assignment" error={assignmentError.length>0} helperText={assignmentError} inputRef={assignmentRef} onChange={handleValidation}/>
